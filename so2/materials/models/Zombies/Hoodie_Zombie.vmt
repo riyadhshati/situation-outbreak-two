@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	// Original shader: VertexLitTexture
+	"$basetexture" "models/Zombies/Hoodie_Zombie"
+	"$halflambert" 1
+
+}
