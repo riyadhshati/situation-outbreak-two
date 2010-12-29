@@ -4,7 +4,6 @@
 //
 //-------------------------------------------------------------------------
 
-@include "base.fgd"
 @include "cstrike.fgd"
 
 @BaseClass base(Targetname, Angles, EnableDisable) iconsprite("editor/npc_maker.vmt") color(0 0 255) = BaseNPCMaker
