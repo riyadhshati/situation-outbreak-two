@@ -13,15 +13,6 @@
 
 #define MODEL_CHANGE_DELAY 10.0f
 
-// Health regeneration system
-ConVar so_health_regen( "so_health_regen", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Toggles player health regeneration functionality" );
-ConVar so_health_regen_delay( "so_health_regen_delay", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Defines the amount of time (in seconds) before players are granted additional health" );
-ConVar so_health_regen_amount( "so_health_regen_amount", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Defines the amount of additional health granted to players upon regeneration" );
-
-// Rework respawning system
-ConVar so_respawn( "so_respawn", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Toggles automatic respawning functionality" );
-ConVar so_respawn_time( "so_respawn_time", "5", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Defines the amount of time (in seconds) dead players must wait before they respawn" );
-
 LINK_ENTITY_TO_CLASS( player, CSO_Player );
 
 extern void SendProxy_Origin( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
@@ -39,6 +30,15 @@ BEGIN_DATADESC( CSO_Player )
 END_DATADESC()
 
 #pragma warning( disable : 4355 )
+
+// Health regeneration system
+extern ConVar so_health_regen;
+extern ConVar so_health_regen_delay;
+extern ConVar so_health_regen_amount;
+
+// Rework respawning system
+extern ConVar so_respawn;
+extern ConVar so_respawn_time;
 
 CSO_Player::CSO_Player()
 {
@@ -538,6 +538,7 @@ void CSO_Player::Event_Killed( const CTakeDamageInfo &info )
 	m_pHolsteredWeapon = NULL;	// weapon is no longer holstered (we're dead); reset variable
 }
 
+// Rework respawning system
 // Much of the contents of this function are identical to CBasePlayer::PlayerDeathThink
 void CSO_Player::PlayerDeathThink( void )
 {
@@ -587,50 +588,20 @@ void CSO_Player::PlayerDeathThink( void )
 
 	AddEffects( EF_NOINTERP );
 	m_flPlaybackRate = 0.0;
-	
-	int fAnyButtonDown = m_nButtons & ~IN_SCORE;
-	
-	// Strip out the duck key from this check if it's toggled
-	if ( (fAnyButtonDown & IN_DUCK) && GetToggledDuckState() )
-		fAnyButtonDown &= ~IN_DUCK;
 
-	// wait for all buttons released
-	if ( m_lifeState == LIFE_DEAD )
-	{
-		if ( fAnyButtonDown )
-			return;
-
-		if ( g_pGameRules->FPlayerCanRespawn(this) )
-			m_lifeState = LIFE_RESPAWNABLE;
-		
-		return;
-	}
-
-	// if the player has been dead for one second longer than allowed by forcerespawn, 
-	// forcerespawn isn't on. Send the player off to an intermission camera until they 
-	// choose to respawn.
-	if ( (gpGlobals->curtime >= (m_flDeathTime + DEATH_ANIMATION_TIME)) && !IsObserver() )
-	{
-		StartObserverMode( OBS_MODE_ROAMING );	// start roaming around as an observer now that we're dead
-
-		// Rework respawning system
-		if ( !so_respawn.GetBool() || (GetTeamNumber() == TEAM_SPECTATOR) )	// we shouldn't need to think again under either of these conditions...at least for now
-		{
-			SetNextThink( TICK_NEVER_THINK );	// TODO: This doesn't seem to prevent us from repeating this function again and again
-			return;	// we won't respawn until the round in-progress is over, so stop checking now that we're observing
-		}
-	}
-
-	// Rework respawning system
-	if ( (GetTeamNumber() != TEAM_SPECTATOR) && so_respawn.GetBool() && (gpGlobals->curtime >= (m_flDeathTime + DEATH_ANIMATION_TIME + so_respawn_time.GetInt())) )
+	if ( SOGameRules()->FPlayerCanRespawn(this) && (gpGlobals->curtime >= (m_flDeathTime + DEATH_ANIMATION_TIME + so_respawn_time.GetInt())) )
 	{
 		m_nButtons = 0;
 		m_iRespawnFrames = 0;
 
-		extern void respawn( CBaseEntity *pEdict, bool fCopyCorpse );
-		respawn( this, !IsObserver() );// don't copy a corpse if we're in deathcam.
+		Spawn();	// respawn the player
+		ClientPrint( this, HUD_PRINTTALK, "You have been redeployed." );
 
 		SetNextThink( TICK_NEVER_THINK );
+	}
+	else if ( (gpGlobals->curtime >= (m_flDeathTime + DEATH_ANIMATION_TIME)) && !IsObserver() )
+	{
+		StartObserverMode( OBS_MODE_ROAMING );	// start roaming around as an observer now that we've been dead for a little while
 	}
 }
 

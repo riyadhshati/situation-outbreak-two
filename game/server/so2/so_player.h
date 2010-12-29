@@ -60,8 +60,10 @@ public:
 	void Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecTarget, const Vector *pVelocity );
 	int OnTakeDamage( const CTakeDamageInfo &inputInfo );
 	void Event_Killed( const CTakeDamageInfo &info );
-	void PlayerDeathThink( void );
 	bool StartObserverMode( int mode );
+
+	// Rework respawning system
+	void PlayerDeathThink( void );
 
 	// Do not allow players to fire weapons on ladders
 	// http://articles.thewavelength.net/724/
