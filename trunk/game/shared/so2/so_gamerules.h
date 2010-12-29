@@ -53,18 +53,21 @@ public:
 	void DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info );
 	void ClientSettingsChanged( CBasePlayer *pPlayer );
 
+	const char *GetGameDescription( void ) { return "Situation Outbreak Two"; }
+
+	// Rework respawning system
 	int PlayerRelationship( CBaseEntity *pPlayer, CBaseEntity *pTarget );
 
 	// Do not allow players to hurt each other
 	bool FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker );
-
-	const char *GetGameDescription( void ) { return "Situation Outbreak Two"; }
 
 #ifndef CLIENT_DLL
 	// Fix various NPC-related issues and bugs in multiplayer
 	// http://developer.valvesoftware.com/wiki/Fixing_AI_in_multiplayer#Patch
 	// Using a similar system to the one mentioned in the link above, but it is not exactly the same
 	void InitDefaultAIRelationships( void );
+
+	bool FPlayerCanRespawn( CBasePlayer *pPlayer );
 #endif
 
 	// Clean up dead bodies and stuff every now and then

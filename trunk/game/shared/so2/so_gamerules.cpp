@@ -41,6 +41,20 @@ END_NETWORK_TABLE()
 LINK_ENTITY_TO_CLASS( so_gamerules, CSOGameRulesProxy );
 IMPLEMENT_NETWORKCLASS_ALIASED( SOGameRulesProxy, DT_SOGameRulesProxy )
 
+#ifndef CLIENT_DLL
+	// Health regeneration system
+	ConVar so_health_regen( "so_health_regen", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Toggles player health regeneration functionality" );
+	ConVar so_health_regen_delay( "so_health_regen_delay", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Defines the amount of time (in seconds) before players are granted additional health" );
+	ConVar so_health_regen_amount( "so_health_regen_amount", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Defines the amount of additional health granted to players upon regeneration" );
+
+	// Rework respawning system
+	ConVar so_respawn( "so_respawn", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Toggles automatic respawning functionality" );
+	ConVar so_respawn_time( "so_respawn_time", "5", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Defines the amount of time (in seconds) dead players must wait before they respawn" );
+
+	extern ConVar sv_report_client_settings;
+#else
+#endif
+
 #ifdef CLIENT_DLL
 	void RecvProxy_SOGameRules( const RecvProp *pProp, void **pOut, void *pData, int objectID )
 	{
@@ -185,10 +199,10 @@ void CSOGameRules::HandleRoundEndConditions()
 			{
 				PlayAnnouncementSound( "SO.RoundLost" );
 
-				UTIL_ClientPrintAll( HUD_PRINTCENTER, "YOU FAILED!" );
+				UTIL_ClientPrintAll( HUD_PRINTCENTER, "MISSION FAILED!" );
 
 				UTIL_ClientPrintAll( HUD_PRINTTALK, " " );
-				UTIL_ClientPrintAll( HUD_PRINTTALK, "YOU FAILED!" );
+				UTIL_ClientPrintAll( HUD_PRINTTALK, "MISSION FAILED!" );
 				UTIL_ClientPrintAll( HUD_PRINTTALK, "Your team was wiped out." );
 				UTIL_ClientPrintAll( HUD_PRINTTALK, "A new unit will be deployed shortly." );
 				UTIL_ClientPrintAll( HUD_PRINTTALK, " " );
@@ -215,6 +229,30 @@ void CSOGameRules::CheckRestartGame( void )
 		m_bCompleteReset = true;
 		mp_restartgame.SetValue( 0 );
 	}
+}
+
+// Rework respawning system
+bool CSOGameRules::FPlayerCanRespawn( CBasePlayer *pPlayer )
+{
+	// If the game is over, it's over, so no respawning!
+	if ( g_fGameOver )
+		return false;
+
+	// Round system
+	// If the current round is over, that means we'll be respawned automatically when another begins
+	// In other words, don't respawn now, because that would mean respawning between rounds
+	if ( m_bRoundOver )
+		return false;
+
+	// If respawning is not enabled, of course we can't respawn!
+	if ( !so_respawn.GetBool() )
+		return false;
+
+	// Do not allow spectators to respawn (for obvious reasons)
+	if ( pPlayer->GetTeamNumber() == TEAM_SPECTATOR )
+		return false;
+
+	return true;	// if we've made it this far, we've certainly earned a respawn =P
 }
 
 #endif
@@ -547,33 +585,42 @@ void CSOGameRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 		return;
 
 	const char *pCurrentModel = modelinfo->GetModelName( pPlayer->GetModel() );
-	const char *szModelName = engine->GetClientConVarValue( engine->IndexOfEdict( pPlayer->edict() ), "cl_playermodel" );
+	const char *szDesiredModelName = engine->GetClientConVarValue( engine->IndexOfEdict( pPlayer->edict() ), "cl_playermodel" );
 
 	// Check to see if our desired player model name is different than our current player model name
-	if ( stricmp(szModelName, pCurrentModel) )
+	if ( stricmp(szDesiredModelName, pCurrentModel) )
 	{
 		// It is, so try to make our current player model the same as the desired one using model names
 
-		//Too soon, set the cvar back to what it was.
-		//Note: this will make this function be called again
-		//but since our models will match it'll just skip this whole dealio.
-		if ( pSOPlayer->GetModelChangeDelay() >= gpGlobals->curtime )
+		if ( pSOPlayer->GetModelChangeDelay() < gpGlobals->curtime )
 		{
+			// Ah, but we can't because we've already changed player models recently!
+			// Handle this by setting our desired player model name to our current player model name
+
 			char szReturnString[512];
 			Q_snprintf( szReturnString, sizeof(szReturnString), "cl_playermodel %s\n", pCurrentModel );
 			engine->ClientCommand( pSOPlayer->edict(), szReturnString );
 
 			ClientPrint( pSOPlayer, HUD_PRINTTALK, "You cannot change your character so soon!" );
 
-			Q_snprintf( szReturnString, sizeof(szReturnString), "Please wait %d more second(s) before trying to switch again.\n", (int)(pSOPlayer->GetNextModelChangeTime() - gpGlobals->curtime) );
-			ClientPrint( pSOPlayer, HUD_PRINTTALK, szReturnString );
-			return;
-		}
+			int waitingTimeLeft = pSOPlayer->GetNextModelChangeTime() - gpGlobals->curtime;
+			if ( waitingTimeLeft == 1 )
+				Q_snprintf( szReturnString, sizeof(szReturnString), "Please wait %d more second before trying to switch again.\n", waitingTimeLeft );
+			else
+				Q_snprintf( szReturnString, sizeof(szReturnString), "Please wait %d more seconds before trying to switch again.\n", waitingTimeLeft );
 
-		pSOPlayer->SetPlayerModel();
+			ClientPrint( pSOPlayer, HUD_PRINTTALK, szReturnString );
+
+			// This function will now be called again thanks to our changes above
+			// Fortunately, all of this is skipped because of our first comparison condition
+		}
+		else
+		{
+			// We have been given the green light to change player models, so do so
+			pSOPlayer->SetPlayerModel();
+		}
 	}
 
-	extern ConVar sv_report_client_settings;
 	if ( sv_report_client_settings.GetInt() == 1 )
 		UTIL_LogPrintf( "\"%s\" cl_cmdrate = \"%s\"\n", pSOPlayer->GetPlayerName(), engine->GetClientConVarValue( pSOPlayer->entindex(), "cl_cmdrate" ) );
 
