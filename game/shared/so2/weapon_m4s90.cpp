@@ -11,24 +11,22 @@
 #include "weapon_sobasehlmpcombatweapon.h"
 
 #ifdef CLIENT_DLL
-#define CWeaponM3S90 C_WeaponM3S90
+#define CWeaponM4S90 C_WeaponM4S90
 #endif
 
 extern ConVar sk_auto_reload_time;
 extern ConVar sk_plr_num_shotgun_pellets;
 
-class CWeaponM3S90 : public CBaseSOCombatWeapon
+class CWeaponM4S90 : public CBaseSOCombatWeapon
 {
 public:
-	DECLARE_CLASS( CWeaponM3S90, CBaseSOCombatWeapon );
+	DECLARE_CLASS( CWeaponM4S90, CBaseSOCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 
 private:
-	CNetworkVar( bool, m_bNeedPump );		// When emptied completely
 	CNetworkVar( bool, m_bDelayedFire1 );	// Fire primary when finished reloading
-	CNetworkVar( bool, m_bDelayedReload );	// Reload when finished pump
 
 public:
 	virtual const Vector& GetBulletSpread( void )
@@ -44,53 +42,45 @@ public:
 	bool Reload( void );
 	void FillClip( void );
 	void FinishReload( void );
-	void Pump( void );
 	void ItemPostFrame( void );
 	void PrimaryAttack( void );
-	virtual float GetFireRate( void ) { return 0.7; };
+	virtual float GetFireRate( void ) { return 0.5; };
 
-	CWeaponM3S90( void );
+	CWeaponM4S90( void );
 
 	// Add support for CS:S player animations
-	const char *GetWeaponSuffix( void ) { return "M3S90"; }
+	const char *GetWeaponSuffix( void ) { return "XM1014"; }
 
 private:
-	CWeaponM3S90( const CWeaponM3S90 & );
+	CWeaponM4S90( const CWeaponM4S90 & );
 };
 
-IMPLEMENT_NETWORKCLASS_ALIASED( WeaponM3S90, DT_WeaponM3S90 )
+IMPLEMENT_NETWORKCLASS_ALIASED( WeaponM4S90, DT_WeaponM4S90 )
 
-BEGIN_NETWORK_TABLE( CWeaponM3S90, DT_WeaponM3S90 )
+BEGIN_NETWORK_TABLE( CWeaponM4S90, DT_WeaponM4S90 )
 #ifdef CLIENT_DLL
-	RecvPropBool( RECVINFO( m_bNeedPump ) ),
 	RecvPropBool( RECVINFO( m_bDelayedFire1 ) ),
-	RecvPropBool( RECVINFO( m_bDelayedReload ) ),
 #else
-	SendPropBool( SENDINFO( m_bNeedPump ) ),
 	SendPropBool( SENDINFO( m_bDelayedFire1 ) ),
-	SendPropBool( SENDINFO( m_bDelayedReload ) ),
 #endif
 END_NETWORK_TABLE()
 
 #ifdef CLIENT_DLL
-BEGIN_PREDICTION_DATA( CWeaponM3S90 )
-	DEFINE_PRED_FIELD( m_bNeedPump, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
+BEGIN_PREDICTION_DATA( CWeaponM4S90 )
 	DEFINE_PRED_FIELD( m_bDelayedFire1, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
-	DEFINE_PRED_FIELD( m_bDelayedReload, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 END_PREDICTION_DATA()
 #endif
 
-LINK_ENTITY_TO_CLASS( weapon_m3s90, CWeaponM3S90 );
-PRECACHE_WEAPON_REGISTER( weapon_m3s90 );
+LINK_ENTITY_TO_CLASS( weapon_m4s90, CWeaponM4S90 );
+PRECACHE_WEAPON_REGISTER( weapon_m4s90 );
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-CWeaponM3S90::CWeaponM3S90( void )
+CWeaponM4S90::CWeaponM4S90( void )
 {
 	m_bReloadsSingly = true;
 
-	m_bNeedPump = false;
 	m_bDelayedFire1 = false;
 
 	m_fMinRange1 = 0.0;
@@ -102,11 +92,8 @@ CWeaponM3S90::CWeaponM3S90( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-bool CWeaponM3S90::StartReload( void )
+bool CWeaponM4S90::StartReload( void )
 {
-	if ( m_bNeedPump )
-		return false;
-
 	CBaseCombatCharacter *pOwner = GetOwner();
 	if ( !pOwner )
 		return false;
@@ -144,7 +131,7 @@ bool CWeaponM3S90::StartReload( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-bool CWeaponM3S90::Reload( void )
+bool CWeaponM4S90::Reload( void )
 {
 	// Check that StartReload was called first
 	if ( !m_bInReload )
@@ -184,7 +171,7 @@ bool CWeaponM3S90::Reload( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CWeaponM3S90::FinishReload( void )
+void CWeaponM4S90::FinishReload( void )
 {
 	// Make shotgun shell invisible
 	SetBodygroup( 1, 1 );
@@ -210,7 +197,7 @@ void CWeaponM3S90::FinishReload( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CWeaponM3S90::FillClip( void )
+void CWeaponM4S90::FillClip( void )
 {
 	CBaseCombatCharacter *pOwner = GetOwner();
 	if ( !pOwner )
@@ -228,31 +215,11 @@ void CWeaponM3S90::FillClip( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Play weapon pump anim
-// Input  :
-// Output :
-//-----------------------------------------------------------------------------
-void CWeaponM3S90::Pump( void )
-{
-	CBaseCombatCharacter *pOwner = GetOwner();
-	if ( !pOwner )
-		return;
-	
-	m_bNeedPump = false;
-
-	if ( m_bDelayedReload )
-	{
-		m_bDelayedReload = false;
-		StartReload();
-	}
-}
-
-//-----------------------------------------------------------------------------
 // Purpose: 
 //
 //
 //-----------------------------------------------------------------------------
-void CWeaponM3S90::PrimaryAttack( void )
+void CWeaponM4S90::PrimaryAttack( void )
 {
 	// Only the player fires this way so we can cast
 	CSO_Player *pPlayer = ToSOPlayer( GetOwner() );
@@ -292,14 +259,12 @@ void CWeaponM3S90::PrimaryAttack( void )
 		// HEV suit - indicate out of ammo condition
 		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
 	}
-
-	m_bNeedPump = true;
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Override so shotgun can do mulitple reloads in a row
 //-----------------------------------------------------------------------------
-void CWeaponM3S90::ItemPostFrame( void )
+void CWeaponM4S90::ItemPostFrame( void )
 {
 	CSO_Player *pOwner = ToSOPlayer( GetOwner() );
 	if ( !pOwner )
@@ -311,22 +276,16 @@ void CWeaponM3S90::ItemPostFrame( void )
 	if ( pOwner->GetHolsteredWeapon() == this )
 	{
 		m_bInReload = false;
-		m_bNeedPump = false;
 		m_bDelayedFire1 = false;
-		m_bDelayedReload = false;
 		return;
 	}
-
-	if ( m_bNeedPump && (pOwner->m_nButtons & IN_RELOAD) )
-		m_bDelayedReload = true;
 
 	if ( m_bInReload )
 	{
 		// If I'm primary firing and have one round stop reloading and fire
-		if ( (pOwner->m_nButtons & IN_ATTACK) && (m_iClip1 >=1) && !m_bNeedPump )
+		if ( (pOwner->m_nButtons & IN_ATTACK) && (m_iClip1 >=1) )
 		{
 			m_bInReload = false;
-			m_bNeedPump = false;
 			m_bDelayedFire1 = true;
 		}
 		else if ( m_flNextPrimaryAttack <= gpGlobals->curtime )
@@ -355,12 +314,6 @@ void CWeaponM3S90::ItemPostFrame( void )
 	{			
 		// Make shotgun shell invisible
 		SetBodygroup( 1, 1 );
-	}
-
-	if ( m_bNeedPump && (m_flNextPrimaryAttack <= gpGlobals->curtime) )
-	{
-		Pump();
-		return;
 	}
 	
 	if ( (m_bDelayedFire1 || (pOwner->m_nButtons & IN_ATTACK)) && (m_flNextPrimaryAttack <= gpGlobals->curtime) )

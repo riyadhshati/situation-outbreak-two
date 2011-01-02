@@ -1632,6 +1632,9 @@
     <ClCompile Include="..\shared\so2\weapon_m3s90.cpp">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_m4s90.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="achievement_notification_panel.h">
