@@ -237,6 +237,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "c:\program file
     <ClCompile Include="..\shared\so2\weapon_m249.cpp" />
     <ClCompile Include="..\shared\so2\weapon_m3s90.cpp" />
     <ClCompile Include="..\shared\so2\weapon_m4a1.cpp" />
+    <ClCompile Include="..\shared\so2\weapon_m4s90.cpp" />
     <ClCompile Include="..\shared\so2\weapon_mac10.cpp" />
     <ClCompile Include="..\shared\so2\weapon_mp5n.cpp" />
     <ClCompile Include="..\shared\so2\weapon_p228.cpp" />
