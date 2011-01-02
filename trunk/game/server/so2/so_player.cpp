@@ -11,6 +11,48 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+// Add support for CS:S player animations
+// -------------------------------------------------------------------------------- //
+// Player animation event. Sent to the client when a player fires, jumps, reloads, etc..
+// -------------------------------------------------------------------------------- //
+class CTEPlayerAnimEvent : public CBaseTempEntity
+{
+public:
+	DECLARE_CLASS( CTEPlayerAnimEvent, CBaseTempEntity );
+	DECLARE_SERVERCLASS();
+
+					CTEPlayerAnimEvent( const char *name ) : CBaseTempEntity( name )
+					{
+					}
+
+	CNetworkHandle( CBasePlayer, m_hPlayer );
+	CNetworkVar( int, m_iEvent );
+	CNetworkVar( int, m_nData );
+};
+
+#define THROWGRENADE_COUNTER_BITS 3
+
+IMPLEMENT_SERVERCLASS_ST_NOBASE( CTEPlayerAnimEvent, DT_TEPlayerAnimEvent )
+	SendPropEHandle( SENDINFO( m_hPlayer ) ),
+	SendPropInt( SENDINFO( m_iEvent ), Q_log2( PLAYERANIMEVENT_COUNT ) + 1, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO( m_nData ), 32 )
+END_SEND_TABLE()
+
+static CTEPlayerAnimEvent g_TEPlayerAnimEvent( "PlayerAnimEvent" );
+
+void TE_PlayerAnimEvent( CBasePlayer *pPlayer, PlayerAnimEvent_t event, int nData )
+{
+	CPVSFilter filter( (const Vector&)pPlayer->EyePosition() );
+
+	//Tony; use prediction rules.
+	filter.UsePredictionRules();
+	
+	g_TEPlayerAnimEvent.m_hPlayer = pPlayer;
+	g_TEPlayerAnimEvent.m_iEvent = event;
+	g_TEPlayerAnimEvent.m_nData = nData;
+	g_TEPlayerAnimEvent.Create( filter, 0 );
+}
+
 #define MODEL_CHANGE_DELAY 10.0f
 
 LINK_ENTITY_TO_CLASS( player, CSO_Player );
@@ -24,6 +66,13 @@ BEGIN_SEND_TABLE_NOBASE( CSO_Player, DT_SONonLocalPlayerExclusive )
 END_SEND_TABLE()
 
 IMPLEMENT_SERVERCLASS_ST( CSO_Player, DT_SO_Player )
+	// Add support for CS:S player animations
+	SendPropInt( SENDINFO(m_iThrowGrenadeCounter), THROWGRENADE_COUNTER_BITS, SPROP_UNSIGNED ),
+
+	// Do not allow players to fire weapons on ladders
+	// http://articles.thewavelength.net/724/
+	// Do not allow players to fire weapons while sprinting
+	SendPropEHandle( SENDINFO( m_hHolsteredWeapon ) ),
 END_SEND_TABLE()
 
 BEGIN_DATADESC( CSO_Player )
@@ -52,13 +101,14 @@ CSO_Player::CSO_Player()
 	// Do not allow players to fire weapons on ladders
 	// http://articles.thewavelength.net/724/
 	// Do not allow players to fire weapons while sprinting
-	m_pHolsteredWeapon = NULL;
+	m_hHolsteredWeapon = NULL;
 
 	// Base each player's speed on their health
 	m_flSpeedCheckDelay = 0.0f;
 
 	// Add support for CS:S player animations
 	DoAnimationEvent( PLAYERANIMEVENT_SPAWN );
+	m_iThrowGrenadeCounter = 0;
 }
 
 CSO_Player::~CSO_Player( void )
@@ -95,6 +145,11 @@ void CSO_Player::Precache( void )
 void CSO_Player::Spawn( void )
 {
 	BaseClass::Spawn();
+
+	// Do not allow players to fire weapons on ladders
+	// http://articles.thewavelength.net/724/
+	// Do not allow players to fire weapons while sprinting
+	m_hHolsteredWeapon = NULL;	// weapon is no longer holstered (we just spawned); reset variable
 }
 
 void CSO_Player::ChangeTeam( int iTeam )
@@ -115,29 +170,27 @@ void CSO_Player::ChangeTeam( int iTeam )
 
 void CSO_Player::GiveAllItems( void )
 {
-	// Restock our default weapons and ammo first
+	// Impulse 101 doesn't do much anymore
+	// All it does now is resupply us with our default weapons and ammo
+	// There are simply too many weapons in the game to give the player everything all at once
 	GiveDefaultItems();
-
-	// Give us all the other weapons in the game in addition to our default weapons
-	GiveNamedItem( "weapon_deagle" );
-	GiveNamedItem( "weapon_p90" );
-	GiveNamedItem( "weapon_aug" );
-	GiveNamedItem( "weapon_m3" );
 }
 
 void CSO_Player::GiveDefaultItems( void )
 {
-	// Give us all the ammo we'll ever need when we spawn
-	// (the actual amount of ammo we get depends on the maximum amount of ammo each weapon can hold)
+	// Give us the maximum amount of ammo we can carry at a time when we spawn
+	// (the actual amount of ammo we get depends on the maximum amount of ammo each weapon can hold, which is defined in so_gamerules.cpp)
 	CBasePlayer::GiveAmmo( 9999, "pistol" );
 	CBasePlayer::GiveAmmo( 9999, "heavypistol" );
 	CBasePlayer::GiveAmmo( 9999, "smg" );
 	CBasePlayer::GiveAmmo( 9999, "rifle" );
 	CBasePlayer::GiveAmmo( 9999, "shotgun" );
+	CBasePlayer::GiveAmmo( 9999, "machinegun" );
+	CBasePlayer::GiveAmmo( 9999, "grenade" );
 
-	// Equip and switch to our default pistol (p228) automatically
-	GiveNamedItem( "weapon_p228" );
-	Weapon_Switch( Weapon_OwnsThisType( "weapon_p228" ) );
+	// Equip and switch to our default weapon, the USP, automatically
+	GiveNamedItem( "weapon_usp" );
+	Weapon_Switch( Weapon_OwnsThisType( "weapon_usp" ) );
 }
 
 bool CSO_Player::ValidatePlayerModel( const char *pModel )
@@ -278,7 +331,7 @@ bool CSO_Player::ClientCommand( const CCommand &args )
 // Much of this function should resemble CHL2MP_Player::HandleCommand_JoinTeam
 bool CSO_Player::HandleCommand_JoinTeam( int team )
 {
-	if ( !GetGlobalTeam( team ) || team == 0 )
+	if ( !GetGlobalTeam( team ) || (team == 0) )
 	{
 		Warning( "HandleCommand_JoinTeam( %d ) - invalid team index.\n", team );
 		return false;
@@ -306,7 +359,7 @@ bool CSO_Player::HandleCommand_JoinTeam( int team )
 	else
 	{
 		StopObserverMode();
-		State_Transition(STATE_ACTIVE);
+		State_Transition( STATE_ACTIVE );
 	}
 
 	// Switch their actual team...
@@ -319,28 +372,18 @@ bool CSO_Player::HandleCommand_JoinTeam( int team )
 void CC_Player_Drop( void )
 {
 	CSO_Player *pPlayer = ToSOPlayer( UTIL_GetCommandClient() );
-	if( !pPlayer )
+	if ( !pPlayer )
 		return;
 
 	CWeaponSOBase *pWeapon = dynamic_cast<CWeaponSOBase*>( pPlayer->GetActiveWeapon() );
-	if( pWeapon )
-	{
-		// TODO: This next bit is commented for now until we have some default weapons coded in to work with
+	if ( !pWeapon )
+		return;
 
-		/*// Do not allow players to drop certain default weapons
-		if( FClassnameIs( pWeapon, "weapon_zombie" ) ||
-			FClassnameIs( pWeapon, "weapon_charple" ) ||
-			FClassnameIs( pWeapon, "weapon_corpse" ) ||
-			FClassnameIs( pWeapon, "weapon_stalker" ) ||
-			FClassnameIs( pWeapon, "weapon_brassknuckles" ) )
-		{
-			return;
-		}*/
-
+	// Only drop weapons we're allowed to drop
+	if ( pWeapon->CanDrop() )
 		pPlayer->Weapon_Drop( pWeapon, NULL, NULL );
-	}
 }
-static ConCommand drop( "drop", CC_Player_Drop, "Drops the player's active weapon (if possible)" );
+static ConCommand drop( "drop", CC_Player_Drop, "If possible, drops one's equipped weapon" );
 
 // This function may need to be reworked in the future, so I've decided to copy and paste all BaseClass versions
 // In fact, I've already made some changes...
@@ -535,7 +578,7 @@ void CSO_Player::Event_Killed( const CTakeDamageInfo &info )
 	// Do not allow players to fire weapons on ladders
 	// http://articles.thewavelength.net/724/
 	// Do not allow players to fire weapons while sprinting
-	m_pHolsteredWeapon = NULL;	// weapon is no longer holstered (we're dead); reset variable
+	m_hHolsteredWeapon = NULL;	// weapon is no longer holstered (we're dead); reset variable
 }
 
 // Rework respawning system
@@ -659,50 +702,20 @@ bool CSO_Player::StartObserverMode( int mode )
 }
 
 // Add support for CS:S player animations
-// -------------------------------------------------------------------------------- //
-// Player animation event. Sent to the client when a player fires, jumps, reloads, etc..
-// -------------------------------------------------------------------------------- //
-class CTEPlayerAnimEvent : public CBaseTempEntity
-{
-public:
-	DECLARE_CLASS( CTEPlayerAnimEvent, CBaseTempEntity );
-	DECLARE_SERVERCLASS();
-
-					CTEPlayerAnimEvent( const char *name ) : CBaseTempEntity( name )
-					{
-					}
-
-	CNetworkHandle( CBasePlayer, m_hPlayer );
-	CNetworkVar( int, m_iEvent );
-	CNetworkVar( int, m_nData );
-};
-
-IMPLEMENT_SERVERCLASS_ST_NOBASE( CTEPlayerAnimEvent, DT_TEPlayerAnimEvent )
-	SendPropEHandle( SENDINFO( m_hPlayer ) ),
-	SendPropInt( SENDINFO( m_iEvent ), Q_log2( PLAYERANIMEVENT_COUNT ) + 1, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO( m_nData ), 32 )
-END_SEND_TABLE()
-
-static CTEPlayerAnimEvent g_TEPlayerAnimEvent( "PlayerAnimEvent" );
-
-void TE_PlayerAnimEvent( CBasePlayer *pPlayer, PlayerAnimEvent_t event, int nData )
-{
-	CPVSFilter filter( (const Vector&)pPlayer->EyePosition() );
-
-	//Tony; use prediction rules.
-	filter.UsePredictionRules();
-	
-	g_TEPlayerAnimEvent.m_hPlayer = pPlayer;
-	g_TEPlayerAnimEvent.m_iEvent = event;
-	g_TEPlayerAnimEvent.m_nData = nData;
-	g_TEPlayerAnimEvent.Create( filter, 0 );
-}
-
-// Add support for CS:S player animations
 void CSO_Player::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 {
-	m_SOPlayerAnimState->DoAnimationEvent( event, nData );
-	TE_PlayerAnimEvent( this, event, nData );	// Send to any clients who can see this guy.
+	if ( event == PLAYERANIMEVENT_ATTACK_GRENADE )
+	{
+		// Grenade throwing has to synchronize exactly with the player's grenade weapon going away,
+		// and events get delayed a bit, so we let CCSPlayerAnimState pickup the change to this
+		// variable.
+		m_iThrowGrenadeCounter = (m_iThrowGrenadeCounter+1) % (1<<THROWGRENADE_COUNTER_BITS);
+	}
+	else
+	{
+		m_SOPlayerAnimState->DoAnimationEvent( event, nData );
+		TE_PlayerAnimEvent( this, event, nData );	// Send to any clients who can see this guy.
+	}
 }
 
 // Add support for CS:S player animations

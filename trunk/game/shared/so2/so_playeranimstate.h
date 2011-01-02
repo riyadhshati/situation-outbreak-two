@@ -1,5 +1,5 @@
 // Add support for CS:S player animations
-// This file should closely resemble sdk_playeranimstate.h because it's practically that same file with some edits
+// This file should at least somewhat resemble sdk_playeranimstate.h because it is originally based on that file
 
 #ifndef SO_PLAYERANIMSTATE_H
 #define SO_PLAYERANIMSTATE_H
@@ -32,11 +32,11 @@ public:
 	~CSOPlayerAnimState();
 
 	void InitSOAnimState( CSO_Player *pPlayer );
-	CSO_Player *GetSOPlayer( void )							{ return m_pSOPlayer; }
+	CSO_Player *GetSOPlayer( void ) { return m_pSOPlayer; }
 
-	virtual void ClearAnimationState();
-	virtual Activity TranslateActivity( Activity actDesired );
-	virtual void Update( float eyeYaw, float eyePitch );
+	void ClearAnimationState();
+	Activity TranslateActivity( Activity actDesired );
+	void Update( float eyeYaw, float eyePitch );
 
 	void	DoAnimationEvent( PlayerAnimEvent_t event, int nData = 0 );
 
@@ -47,6 +47,8 @@ public:
 	virtual Activity CalcMainActivity();
 
 	bool HandleJumping( Activity &idealActivity );
+
+	bool IsThrowingGrenade();
 
 private:
 	
@@ -65,6 +67,13 @@ private:
 	void UpdateAimSequenceLayers( float flCycle, int iFirstLayer, bool bForceIdle, CSequenceTransitioner *pTransitioner, float flWeightScale );
 	void OptimizeLayerWeights( int iFirstLayer, int nLayers );
 	void ComputeSequences( CStudioHdr *pStudioHdr );
+
+	bool IsOuterGrenadePrimed();
+	void ComputeGrenadeSequence( CStudioHdr *pStudioHdr );
+	int CalcGrenadePrimeSequence();
+	int CalcGrenadeThrowSequence();
+	int GetOuterGrenadeThrowCounter();
+	float TimeSinceLastAnimationStateClear() const;
 
 	void ComputeFireSequence( CStudioHdr *pStudioHdr );
 	void ComputeReloadSequence( CStudioHdr *pStudioHdr );
@@ -89,6 +98,13 @@ private:
 	bool m_bReloading;
 	float m_flReloadCycle;
 	int m_iReloadSequence;
+
+	// These control grenade animations.
+	bool m_bThrowingGrenade;
+	bool m_bPrimingGrenade;
+	float m_flGrenadeCycle;
+	int m_iGrenadeSequence;
+	int m_iLastThrowGrenadeCounter;	// used to detect when the guy threw the grenade.
 };
 
 CSOPlayerAnimState *CreateSOPlayerAnimState( CSO_Player *pPlayer );

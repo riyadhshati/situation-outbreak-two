@@ -1255,10 +1255,10 @@ void CHL2_Player::StartSprinting( void )
 	if ( pSOPlayer )
 	{
 		pSOPlayer->SetHolsteredWeapon( pSOPlayer->GetActiveWeapon() );
-		if ( pSOPlayer->GetHolsteredWeapon() )
-		{
-			pSOPlayer->GetHolsteredWeapon()->Holster();
-		}
+
+		CBaseCombatWeapon *pHolsteredWeapon = pSOPlayer->GetHolsteredWeapon();
+		if ( pHolsteredWeapon )
+			pHolsteredWeapon->Holster();
 	}
 
 /////
@@ -1285,9 +1285,10 @@ void CHL2_Player::StopSprinting( void )
 	CSO_Player *pSOPlayer = ToSOPlayer( this );
 	if ( pSOPlayer )
 	{
-		if ( pSOPlayer->GetHolsteredWeapon() )
+		CBaseCombatWeapon *pHolsteredWeapon = pSOPlayer->GetHolsteredWeapon();
+		if ( pHolsteredWeapon )
 		{
-			pSOPlayer->GetHolsteredWeapon()->Deploy();
+			pHolsteredWeapon->Deploy();
 			pSOPlayer->SetHolsteredWeapon( NULL );	// weapon is no longer holstered; reset variable
 		}
 	}

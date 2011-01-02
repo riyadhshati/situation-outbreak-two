@@ -53,11 +53,8 @@ void CWeaponSOBase::ItemPostFrame( void )
 
 	// Do not allow players to fire weapons on ladders
 	// http://articles.thewavelength.net/724/
-    if( pOwner->GetMoveType() == MOVETYPE_LADDER )
-		return;
-
 	// Do not allow players to fire weapons while sprinting
-    if( pOwner->IsSprinting() )
+	if ( pOwner->GetHolsteredWeapon() == this )
 		return;
 
 	BaseClass::ItemPostFrame();

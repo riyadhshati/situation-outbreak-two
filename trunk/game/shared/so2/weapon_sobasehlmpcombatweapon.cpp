@@ -36,7 +36,6 @@ BEGIN_DATADESC( CBaseSOCombatWeapon )
 
 	DEFINE_FIELD( m_bLowered,			FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_flRaiseTime,		FIELD_TIME ),
-	DEFINE_FIELD( m_flHolsterTime,		FIELD_TIME ),
 
 END_DATADESC()
 
@@ -50,30 +49,6 @@ extern ConVar sk_auto_reload_time;
 CBaseSOCombatWeapon::CBaseSOCombatWeapon( void )
 {
 
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CBaseSOCombatWeapon::ItemHolsterFrame( void )
-{
-	BaseClass::ItemHolsterFrame();
-
-	// Must be player held
-	if ( GetOwner() && GetOwner()->IsPlayer() == false )
-		return;
-
-	// We can't be active
-	if ( GetOwner()->GetActiveWeapon() == this )
-		return;
-
-	// If it's been longer than three seconds, reload
-	if ( ( gpGlobals->curtime - m_flHolsterTime ) > sk_auto_reload_time.GetFloat() )
-	{
-		// Just load the clip with no animations
-		FinishReload();
-		m_flHolsterTime = gpGlobals->curtime;
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -136,22 +111,6 @@ bool CBaseSOCombatWeapon::Deploy( void )
 
 	m_bLowered = false;
 	return BaseClass::Deploy();
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : Returns true on success, false on failure.
-//-----------------------------------------------------------------------------
-bool CBaseSOCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
-{
-	if ( BaseClass::Holster( pSwitchingTo ) )
-	{
-		SetWeaponVisible( false );
-		m_flHolsterTime = gpGlobals->curtime;
-		return true;
-	}
-
-	return false;
 }
 
 //-----------------------------------------------------------------------------

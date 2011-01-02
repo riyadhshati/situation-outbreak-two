@@ -17,16 +17,16 @@
 #include "weapon_sobasehlmpcombatweapon.h"
 
 #ifdef CLIENT_DLL
-#define CWeaponM3 C_WeaponM3
+#define CWeaponM3S90 C_WeaponM3S90
 #endif
 
 extern ConVar sk_auto_reload_time;
 extern ConVar sk_plr_num_shotgun_pellets;
 
-class CWeaponM3 : public CBaseSOCombatWeapon
+class CWeaponM3S90 : public CBaseSOCombatWeapon
 {
 public:
-	DECLARE_CLASS( CWeaponM3, CBaseSOCombatWeapon );
+	DECLARE_CLASS( CWeaponM3S90, CBaseSOCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
@@ -50,27 +50,23 @@ public:
 	bool Reload( void );
 	void FillClip( void );
 	void FinishReload( void );
-	void CheckHolsterReload( void );
 	void Pump( void );
-//	void WeaponIdle( void );
-	void ItemHolsterFrame( void );
 	void ItemPostFrame( void );
 	void PrimaryAttack( void );
-	void DryFire( void );
 	virtual float GetFireRate( void ) { return 0.7; };
 
-	CWeaponM3(void);
+	CWeaponM3S90(void);
 
 	// Add support for CS:S player animations
 	const char *GetWeaponSuffix( void ) { return "M3S90"; }
 
 private:
-	CWeaponM3( const CWeaponM3 & );
+	CWeaponM3S90( const CWeaponM3S90 & );
 };
 
-IMPLEMENT_NETWORKCLASS_ALIASED( WeaponM3, DT_WeaponM3 )
+IMPLEMENT_NETWORKCLASS_ALIASED( WeaponM3S90, DT_WeaponM3S90 )
 
-BEGIN_NETWORK_TABLE( CWeaponM3, DT_WeaponM3 )
+BEGIN_NETWORK_TABLE( CWeaponM3S90, DT_WeaponM3S90 )
 #ifdef CLIENT_DLL
 	RecvPropBool( RECVINFO( m_bNeedPump ) ),
 	RecvPropBool( RECVINFO( m_bDelayedFire1 ) ),
@@ -83,22 +79,36 @@ BEGIN_NETWORK_TABLE( CWeaponM3, DT_WeaponM3 )
 END_NETWORK_TABLE()
 
 #ifdef CLIENT_DLL
-BEGIN_PREDICTION_DATA( CWeaponM3 )
+BEGIN_PREDICTION_DATA( CWeaponM3S90 )
 	DEFINE_PRED_FIELD( m_bNeedPump, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_bDelayedFire1, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_bDelayedReload, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 END_PREDICTION_DATA()
 #endif
 
-LINK_ENTITY_TO_CLASS( weapon_m3, CWeaponM3 );
-PRECACHE_WEAPON_REGISTER(weapon_m3);
+LINK_ENTITY_TO_CLASS( weapon_m3s90, CWeaponM3S90 );
+PRECACHE_WEAPON_REGISTER( weapon_m3s90 );
+
+//-----------------------------------------------------------------------------
+// Purpose: Constructor
+//-----------------------------------------------------------------------------
+CWeaponM3S90::CWeaponM3S90( void )
+{
+	m_bReloadsSingly = true;
+
+	m_bNeedPump		= false;
+	m_bDelayedFire1 = false;
+
+	m_fMinRange1		= 0.0;
+	m_fMaxRange1		= 500;
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Override so only reload one shell at a time
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-bool CWeaponM3::StartReload( void )
+bool CWeaponM3S90::StartReload( void )
 {
 	if ( m_bNeedPump )
 		return false;
@@ -126,7 +136,7 @@ bool CWeaponM3::StartReload( void )
 	// ^^ no actual changes, just a reminder or a note of sorts
 	// This isn't the case for CS:S animations Tony, so I'll fix it. =P
 	//Tony; BUG BUG BUG!!! shotgun does one shell at a time!!! -- player model only has a single reload!!! so I'm just going to dispatch the singular for now.
-	ToHL2MPPlayer( pOwner )->DoAnimationEvent( PLAYERANIMEVENT_RELOAD );
+	ToSOPlayer( pOwner )->DoAnimationEvent( PLAYERANIMEVENT_RELOAD );
 
 	// Make shotgun shell visible
 	SetBodygroup(1,0);
@@ -143,7 +153,7 @@ bool CWeaponM3::StartReload( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-bool CWeaponM3::Reload( void )
+bool CWeaponM3S90::Reload( void )
 {
 	// Check that StartReload was called first
 	if (!m_bInReload)
@@ -173,7 +183,7 @@ bool CWeaponM3::Reload( void )
 	SendWeaponAnim( ACT_VM_RELOAD );
 
 	// Add support for CS:S player animations
-	ToHL2MPPlayer( pOwner )->DoAnimationEvent( PLAYERANIMEVENT_RELOAD_LOOP );
+	ToSOPlayer( pOwner )->DoAnimationEvent( PLAYERANIMEVENT_RELOAD_LOOP );
 
 	pOwner->m_flNextAttack = gpGlobals->curtime;
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
@@ -186,7 +196,7 @@ bool CWeaponM3::Reload( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CWeaponM3::FinishReload( void )
+void CWeaponM3S90::FinishReload( void )
 {
 	// Make shotgun shell invisible
 	SetBodygroup(1,1);
@@ -199,7 +209,7 @@ void CWeaponM3::FinishReload( void )
 	m_bInReload = false;
 
 	// Add support for CS:S player animations
-	ToHL2MPPlayer( pOwner )->DoAnimationEvent( PLAYERANIMEVENT_RELOAD_END );
+	ToSOPlayer( pOwner )->DoAnimationEvent( PLAYERANIMEVENT_RELOAD_END );
 
 	// Finish reload animation
 	SendWeaponAnim( ACT_SHOTGUN_RELOAD_FINISH );
@@ -213,7 +223,7 @@ void CWeaponM3::FinishReload( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CWeaponM3::FillClip( void )
+void CWeaponM3S90::FillClip( void )
 {
 	CBaseCombatCharacter *pOwner  = GetOwner();
 	
@@ -236,7 +246,7 @@ void CWeaponM3::FillClip( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CWeaponM3::Pump( void )
+void CWeaponM3S90::Pump( void )
 {
 	CBaseCombatCharacter *pOwner  = GetOwner();
 
@@ -257,28 +267,12 @@ void CWeaponM3::Pump( void )
 //
 //
 //-----------------------------------------------------------------------------
-void CWeaponM3::DryFire( void )
-{
-	WeaponSound(EMPTY);
-	SendWeaponAnim( ACT_VM_DRYFIRE );
-	
-	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//
-//
-//-----------------------------------------------------------------------------
-void CWeaponM3::PrimaryAttack( void )
+void CWeaponM3S90::PrimaryAttack( void )
 {
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-
-	if (!pPlayer)
-	{
+	CSO_Player *pPlayer = ToSOPlayer( GetOwner() );
+	if ( !pPlayer )
 		return;
-	}
 
 	// MUST call sound before removing a round from the clip of a CMachineGun
 	WeaponSound(SINGLE);
@@ -293,11 +287,11 @@ void CWeaponM3::PrimaryAttack( void )
 
 	// player "shoot" animation
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
-	ToHL2MPPlayer(pPlayer)->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+	ToSOPlayer(pPlayer)->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 
 
 	Vector	vecSrc		= pPlayer->Weapon_ShootPosition( );
-	Vector	vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );	
+	Vector	vecAiming	= pPlayer->CBasePlayer::GetAutoaimVector( AUTOAIM_10DEGREES );	
 
 	FireBulletsInfo_t info( 7, vecSrc, vecAiming, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
 	info.m_pAttacker = pPlayer;
@@ -321,20 +315,22 @@ void CWeaponM3::PrimaryAttack( void )
 //-----------------------------------------------------------------------------
 // Purpose: Override so shotgun can do mulitple reloads in a row
 //-----------------------------------------------------------------------------
-void CWeaponM3::ItemPostFrame( void )
+void CWeaponM3S90::ItemPostFrame( void )
 {
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	if (!pOwner)
-	{
+	CSO_Player *pOwner = ToSOPlayer( GetOwner() );
+	if ( !pOwner )
 		return;
-	}
 
-	if ( m_bNeedPump && ( pOwner->m_nButtons & IN_RELOAD ) )
-	{
+	// Do not allow players to fire weapons on ladders
+	// http://articles.thewavelength.net/724/
+	// Do not allow players to fire weapons while sprinting
+	if ( pOwner->GetHolsteredWeapon() == this )
+		return;
+
+	if ( m_bNeedPump && (pOwner->m_nButtons & IN_RELOAD) )
 		m_bDelayedReload = true;
-	}
 
-	if (m_bInReload)
+	if ( m_bInReload )
 	{
 		// If I'm primary firing and have one round stop reloading and fire
 		if ((pOwner->m_nButtons & IN_ATTACK ) && (m_iClip1 >=1) && !m_bNeedPump )
@@ -382,11 +378,7 @@ void CWeaponM3::ItemPostFrame( void )
 		m_bDelayedFire1 = false;
 		if ( (m_iClip1 <= 0 && UsesClipsForAmmo1()) || ( !UsesClipsForAmmo1() && !pOwner->GetAmmoCount(m_iPrimaryAmmoType) ) )
 		{
-			if (!pOwner->GetAmmoCount(m_iPrimaryAmmoType))
-			{
-				DryFire();
-			}
-			else
+			if (pOwner->GetAmmoCount(m_iPrimaryAmmoType))
 			{
 				StartReload();
 			}
@@ -401,7 +393,7 @@ void CWeaponM3::ItemPostFrame( void )
 		else
 		{
 			// If the firing button was just pressed, reset the firing time
-			CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+			CSO_Player *pPlayer = ToSOPlayer( GetOwner() );
 			if ( pPlayer && pPlayer->m_afButtonPressed & IN_ATTACK )
 			{
 				 m_flNextPrimaryAttack = gpGlobals->curtime;
@@ -415,7 +407,7 @@ void CWeaponM3::ItemPostFrame( void )
 		// reload when reload is pressed, or if no buttons are down and weapon is empty.
 		StartReload();
 	}
-	else 
+	else
 	{
 		// no fire buttons down
 		m_bFireOnEmpty = false;
@@ -456,72 +448,3 @@ void CWeaponM3::ItemPostFrame( void )
 	}
 
 }
-
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Constructor
-//-----------------------------------------------------------------------------
-CWeaponM3::CWeaponM3( void )
-{
-	m_bReloadsSingly = true;
-
-	m_bNeedPump		= false;
-	m_bDelayedFire1 = false;
-
-	m_fMinRange1		= 0.0;
-	m_fMaxRange1		= 500;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CWeaponM3::ItemHolsterFrame( void )
-{
-	// Must be player held
-	if ( GetOwner() && GetOwner()->IsPlayer() == false )
-		return;
-
-	// We can't be active
-	if ( GetOwner()->GetActiveWeapon() == this )
-		return;
-
-	// If it's been longer than three seconds, reload
-	if ( ( gpGlobals->curtime - m_flHolsterTime ) > sk_auto_reload_time.GetFloat() )
-	{
-		// Reset the timer
-		m_flHolsterTime = gpGlobals->curtime;
-	
-		if ( GetOwner() == NULL )
-			return;
-
-		if ( m_iClip1 == GetMaxClip1() )
-			return;
-
-		// Just load the clip with no animations
-		int ammoFill = min( (GetMaxClip1() - m_iClip1), GetOwner()->GetAmmoCount( GetPrimaryAmmoType() ) );
-		
-		GetOwner()->RemoveAmmo( ammoFill, GetPrimaryAmmoType() );
-		m_iClip1 += ammoFill;
-	}
-}
-
-//==================================================
-// Purpose: 
-//==================================================
-/*
-void CWeaponM3::WeaponIdle( void )
-{
-	//Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = GetOwner()
-
-	if ( pPlayer == NULL )
-		return;
-
-	//If we're on a target, play the new anim
-	if ( pPlayer->IsOnTarget() )
-	{
-		SendWeaponAnim( ACT_VM_IDLE_ACTIVE );
-	}
-}
-*/

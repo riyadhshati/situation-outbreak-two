@@ -1,21 +1,46 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
-//
-// Purpose:
-//
-// $NoKeywords: $
-//=============================================================================//
-
 #include "cbase.h"
-#include "npcevent.h"
-
-#include "weapon_aug.h"
+#include "weapon_sobase_machinegun.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-//=========================================================
-//=========================================================
+#ifdef CLIENT_DLL
+#define CWeaponAUG C_WeaponAUG
+#endif
 
+class CWeaponAUG : public CSOMachineGun
+{
+public:
+	DECLARE_CLASS( CWeaponAUG, CSOMachineGun );
+
+	CWeaponAUG();
+
+	DECLARE_NETWORKCLASS(); 
+	DECLARE_PREDICTABLE();
+
+	void AddViewKick( void );
+
+	int GetMinBurst( void ) { return 1; }
+	int GetMaxBurst( void ) { return 1; }
+	float GetFireRate( void ) { return 0.086f; }	// about 11.666 (repeating, of course) Hz
+
+	Activity GetPrimaryAttackActivity( void );
+
+	virtual const Vector& GetBulletSpread( void )
+	{
+		static Vector cone;
+		cone = VECTOR_CONE_3DEGREES;
+		return cone;
+	}
+	
+	const WeaponProficiencyInfo_t *GetProficiencyValues();
+
+	// Add support for CS:S player animations
+	const char *GetWeaponSuffix( void ) { return "AUG"; }
+
+private:
+	CWeaponAUG( const CWeaponAUG & );
+};
 
 IMPLEMENT_NETWORKCLASS_ALIASED( WeaponAUG, DT_WeaponAUG )
 
@@ -26,72 +51,32 @@ BEGIN_PREDICTION_DATA( CWeaponAUG )
 END_PREDICTION_DATA()
 
 LINK_ENTITY_TO_CLASS( weapon_aug, CWeaponAUG );
-PRECACHE_WEAPON_REGISTER(weapon_aug);
+PRECACHE_WEAPON_REGISTER( weapon_aug );
 
-CWeaponAUG::CWeaponAUG( )
+CWeaponAUG::CWeaponAUG()
 {
-	m_fMinRange1	= 65;
-	m_fMaxRange1	= 2048;
-
-	m_nShotsFired	= 0;
-	m_nVentPose		= -1;
+	m_fMinRange1 = 0;	// in inches; no minimum range
+	m_fMaxRange1 = 19685;	// in inches; about 500 meters
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: Handle grenade detonate in-air (even when no ammo is left)
-//-----------------------------------------------------------------------------
-void CWeaponAUG::ItemPostFrame( void )
-{
-	// Update our pose parameter for the vents
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-
-	if ( pOwner )
-	{
-		CBaseViewModel *pVM = pOwner->GetViewModel();
-
-		if ( pVM )
-		{
-			if ( m_nVentPose == -1 )
-			{
-				m_nVentPose = pVM->LookupPoseParameter( "VentPoses" );
-			}
-			
-			float flVentPose = RemapValClamped( m_nShotsFired, 0, 5, 0.0f, 1.0f );
-			pVM->SetPoseParameter( m_nVentPose, flVentPose );
-		}
-	}
-
-	BaseClass::ItemPostFrame();
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : Activity
-//-----------------------------------------------------------------------------
 Activity CWeaponAUG::GetPrimaryAttackActivity( void )
 {
 	return ACT_VM_PRIMARYATTACK;
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
 void CWeaponAUG::AddViewKick( void )
 {
-	#define	EASY_DAMPEN			0.5f
-	#define	MAX_VERTICAL_KICK	8.0f	//Degrees
-	#define	SLIDE_LIMIT			5.0f	//Seconds
-	
-	//Get the view kick
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-
-	if (!pPlayer)
+	if ( !pPlayer )
 		return;
+
+	#define	EASY_DAMPEN 0.5f
+	#define	MAX_VERTICAL_KICK 8.0f	// in degrees
+	#define	SLIDE_LIMIT 5.0f	// in seconds
 
 	DoMachineGunKick( pPlayer, EASY_DAMPEN, MAX_VERTICAL_KICK, m_fFireDuration, SLIDE_LIMIT );
 }
 
-//-----------------------------------------------------------------------------
 const WeaponProficiencyInfo_t *CWeaponAUG::GetProficiencyValues()
 {
 	static WeaponProficiencyInfo_t proficiencyTable[] =
@@ -103,7 +88,7 @@ const WeaponProficiencyInfo_t *CWeaponAUG::GetProficiencyValues()
 		{ 1.00,		1.0		},
 	};
 
-	COMPILE_TIME_ASSERT( ARRAYSIZE(proficiencyTable) == WEAPON_PROFICIENCY_PERFECT + 1);
+	COMPILE_TIME_ASSERT( ARRAYSIZE(proficiencyTable) == WEAPON_PROFICIENCY_PERFECT + 1 );
 
 	return proficiencyTable;
 }

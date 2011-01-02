@@ -22,10 +22,17 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+/////
+
+	// SO2 - James
+	// Allow flipping view models
+
 //Tony; modified so that the sdk view models are right handed out of the box.
-#if defined( CSTRIKE_DLL ) || defined( SDK_DLL )
+//#if defined( CSTRIKE_DLL ) || defined( SDK_DLL )
 	ConVar cl_righthand( "cl_righthand", "1", FCVAR_ARCHIVE, "Use right-handed view models." );
-#endif
+//#endif
+
+/////
 
 void PostToolMessage( HTOOLHANDLE hEntity, KeyValues *msg );
 
@@ -174,8 +181,14 @@ bool C_BaseViewModel::Interpolate( float currentTime )
 
 inline bool C_BaseViewModel::ShouldFlipViewModel()
 {
+
+/////
+
+	// SO2 - James
+	// Allow flipping view models
+
 //Tony; changed for SDK so that the CSS models can be flipped out of the box.
-#if defined( CSTRIKE_DLL ) || defined ( SDK_DLL )
+//#if defined( CSTRIKE_DLL ) || defined ( SDK_DLL )
 	//Tony; move this up here.
 	if (!cl_righthand.GetBool())
 		return false;
@@ -191,7 +204,9 @@ inline bool C_BaseViewModel::ShouldFlipViewModel()
 
 		return pInfo->m_bAllowFlipping;
 	}
-#endif
+//#endif
+
+/////
 	
 	return true;	// TODOFIXIXIXX
 }

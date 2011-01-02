@@ -5,15 +5,15 @@
 #include "tier0/memdbgon.h"
 
 #ifdef CLIENT_DLL
-#define CWeaponP90 C_WeaponP90
+#define CWeaponSG552 C_WeaponSG552
 #endif
 
-class CWeaponP90 : public CSOMachineGun
+class CWeaponSG552 : public CSOMachineGun
 {
 public:
-	DECLARE_CLASS( CWeaponP90, CSOMachineGun );
+	DECLARE_CLASS( CWeaponSG552, CSOMachineGun );
 
-	CWeaponP90();
+	CWeaponSG552();
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
@@ -22,62 +22,62 @@ public:
 
 	int GetMinBurst( void ) { return 1; }
 	int GetMaxBurst( void ) { return 1; }
-	float GetFireRate( void ) { return 0.067f; }	// about 15Hz
+	float GetFireRate( void ) { return 0.086f; }	// about 11.666 (repeating, of course) Hz
 
 	Activity GetPrimaryAttackActivity( void );
 
 	virtual const Vector& GetBulletSpread( void )
 	{
 		static Vector cone;
-		cone = VECTOR_CONE_5DEGREES;
+		cone = VECTOR_CONE_3DEGREES;
 		return cone;
 	}
 	
 	const WeaponProficiencyInfo_t *GetProficiencyValues();
 
 	// Add support for CS:S player animations
-	const char *GetWeaponSuffix( void ) { return "P90"; }
+	const char *GetWeaponSuffix( void ) { return "SG552"; }
 
 private:
-	CWeaponP90( const CWeaponP90 & );
+	CWeaponSG552( const CWeaponSG552 & );
 };
 
-IMPLEMENT_NETWORKCLASS_ALIASED( WeaponP90, DT_WeaponP90 )
+IMPLEMENT_NETWORKCLASS_ALIASED( WeaponSG552, DT_WeaponSG552 )
 
-BEGIN_NETWORK_TABLE( CWeaponP90, DT_WeaponP90 )
+BEGIN_NETWORK_TABLE( CWeaponSG552, DT_WeaponSG552 )
 END_NETWORK_TABLE()
 
-BEGIN_PREDICTION_DATA( CWeaponP90 )
+BEGIN_PREDICTION_DATA( CWeaponSG552 )
 END_PREDICTION_DATA()
 
-LINK_ENTITY_TO_CLASS( weapon_p90, CWeaponP90 );
-PRECACHE_WEAPON_REGISTER( weapon_p90 );
+LINK_ENTITY_TO_CLASS( weapon_sg552, CWeaponSG552 );
+PRECACHE_WEAPON_REGISTER( weapon_sg552 );
 
-CWeaponP90::CWeaponP90()
+CWeaponSG552::CWeaponSG552()
 {
 	m_fMinRange1 = 0;	// in inches; no minimum range
-	m_fMaxRange1 = 7874;	// in inches; about 200 meters
+	m_fMaxRange1 = 15748;	// in inches; about 400 meters
 }
 
-Activity CWeaponP90::GetPrimaryAttackActivity( void )
+Activity CWeaponSG552::GetPrimaryAttackActivity( void )
 {
 	return ACT_VM_PRIMARYATTACK;
 }
 
-void CWeaponP90::AddViewKick( void )
+void CWeaponSG552::AddViewKick( void )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 	if ( !pPlayer )
 		return;
 
 	#define	EASY_DAMPEN 0.5f
-	#define	MAX_VERTICAL_KICK 2.0f	// in degrees
-	#define	SLIDE_LIMIT 1.0f	// in seconds
+	#define	MAX_VERTICAL_KICK 5.0f	// in degrees
+	#define	SLIDE_LIMIT 2.0f	// in seconds
 
 	DoMachineGunKick( pPlayer, EASY_DAMPEN, MAX_VERTICAL_KICK, m_fFireDuration, SLIDE_LIMIT );
 }
 
-const WeaponProficiencyInfo_t *CWeaponP90::GetProficiencyValues()
+const WeaponProficiencyInfo_t *CWeaponSG552::GetProficiencyValues()
 {
 	static WeaponProficiencyInfo_t proficiencyTable[] =
 	{

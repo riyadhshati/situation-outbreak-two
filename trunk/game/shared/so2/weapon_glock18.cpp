@@ -11,19 +11,19 @@
 #define	PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME	1.5f	// Maximum penalty to deal out
 
 #ifdef CLIENT_DLL
-#define CWeaponP228 C_WeaponP228
+#define CWeaponGlock18 C_WeaponGlock18
 #endif
 
 //-----------------------------------------------------------------------------
-// CWeaponP228
+// CWeaponGlock18
 //-----------------------------------------------------------------------------
 
-class CWeaponP228 : public CSOMachineGun
+class CWeaponGlock18 : public CSOMachineGun
 {
 public:
-	DECLARE_CLASS( CWeaponP228, CSOMachineGun );
+	DECLARE_CLASS( CWeaponGlock18, CSOMachineGun );
 
-	CWeaponP228(void);
+	CWeaponGlock18(void);
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
@@ -82,12 +82,12 @@ private:
 	CNetworkVar( int,	m_nNumShotsFired );
 
 private:
-	CWeaponP228( const CWeaponP228 & );
+	CWeaponGlock18( const CWeaponGlock18 & );
 };
 
-IMPLEMENT_NETWORKCLASS_ALIASED( WeaponP228, DT_WeaponP228 )
+IMPLEMENT_NETWORKCLASS_ALIASED( WeaponGlock18, DT_WeaponGlock18 )
 
-BEGIN_NETWORK_TABLE( CWeaponP228, DT_WeaponP228 )
+BEGIN_NETWORK_TABLE( CWeaponGlock18, DT_WeaponGlock18 )
 #ifdef CLIENT_DLL
 	RecvPropTime( RECVINFO( m_flSoonestPrimaryAttack ) ),
 	RecvPropTime( RECVINFO( m_flLastAttackTime ) ),
@@ -102,7 +102,7 @@ BEGIN_NETWORK_TABLE( CWeaponP228, DT_WeaponP228 )
 END_NETWORK_TABLE()
 
 #ifdef CLIENT_DLL
-BEGIN_PREDICTION_DATA( CWeaponP228 )
+BEGIN_PREDICTION_DATA( CWeaponGlock18 )
 	DEFINE_PRED_FIELD( m_flSoonestPrimaryAttack, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_flLastAttackTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_flAccuracyPenalty, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
@@ -110,13 +110,13 @@ BEGIN_PREDICTION_DATA( CWeaponP228 )
 END_PREDICTION_DATA()
 #endif
 
-LINK_ENTITY_TO_CLASS( weapon_p228, CWeaponP228 );
-PRECACHE_WEAPON_REGISTER( weapon_p228 );
+LINK_ENTITY_TO_CLASS( weapon_glock18, CWeaponGlock18 );
+PRECACHE_WEAPON_REGISTER( weapon_glock18 );
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-CWeaponP228::CWeaponP228( void )
+CWeaponGlock18::CWeaponGlock18( void )
 {
 	m_flSoonestPrimaryAttack = gpGlobals->curtime;
 	m_flAccuracyPenalty = 0.0f;
@@ -133,7 +133,7 @@ CWeaponP228::CWeaponP228( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CWeaponP228::Precache( void )
+void CWeaponGlock18::Precache( void )
 {
 	BaseClass::Precache();
 }
@@ -141,7 +141,7 @@ void CWeaponP228::Precache( void )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CWeaponP228::PrimaryAttack( void )
+void CWeaponGlock18::PrimaryAttack( void )
 {
 	if ( ( gpGlobals->curtime - m_flLastAttackTime ) > 0.5f )
 	{
@@ -175,7 +175,7 @@ void CWeaponP228::PrimaryAttack( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CWeaponP228::UpdatePenaltyTime( void )
+void CWeaponGlock18::UpdatePenaltyTime( void )
 {
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
@@ -193,7 +193,7 @@ void CWeaponP228::UpdatePenaltyTime( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CWeaponP228::ItemPreFrame( void )
+void CWeaponGlock18::ItemPreFrame( void )
 {
 	UpdatePenaltyTime();
 
@@ -203,7 +203,7 @@ void CWeaponP228::ItemPreFrame( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CWeaponP228::ItemBusyFrame( void )
+void CWeaponGlock18::ItemBusyFrame( void )
 {
 	UpdatePenaltyTime();
 
@@ -213,7 +213,7 @@ void CWeaponP228::ItemBusyFrame( void )
 //-----------------------------------------------------------------------------
 // Purpose: Allows firing as fast as button is pressed
 //-----------------------------------------------------------------------------
-void CWeaponP228::ItemPostFrame( void )
+void CWeaponGlock18::ItemPostFrame( void )
 {
 	BaseClass::ItemPostFrame();
 
@@ -243,14 +243,14 @@ void CWeaponP228::ItemPostFrame( void )
 // Purpose: 
 // Output : int
 //-----------------------------------------------------------------------------
-Activity CWeaponP228::GetPrimaryAttackActivity( void )
+Activity CWeaponGlock18::GetPrimaryAttackActivity( void )
 {
 	return ACT_VM_PRIMARYATTACK;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CWeaponP228::Reload( void )
+bool CWeaponGlock18::Reload( void )
 {
 	bool fRet = DefaultReload( GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD );
 	if ( fRet )
@@ -265,7 +265,7 @@ bool CWeaponP228::Reload( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CWeaponP228::AddViewKick( void )
+void CWeaponGlock18::AddViewKick( void )
 {
 	CBasePlayer *pPlayer  = ToBasePlayer( GetOwner() );
 	

@@ -52,6 +52,15 @@
 #include "tier0/ICommandLine.h"
 #include "prediction.h"
 
+/////
+					
+	// SO2 - James
+	// Fix dual Beretta 92s muzzleflash issue
+
+#include "weapon_dualberetta92s.h"
+
+/////
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -3883,13 +3892,57 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 				if ( input->CAM_IsThirdPerson() )
  				{
  					C_BaseCombatWeapon *pWeapon = GetActiveWeapon();
- 					pWeapon->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
+
+/////
+					
+					// SO2 - James
+					// Fix dual Beretta 92s muzzleflash issue
+
+					//pWeapon->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
+
+					CWeaponDualBeretta92s *pDualElites = dynamic_cast<CWeaponDualBeretta92s *>( pWeapon );
+					if ( pDualElites )
+					{
+						if ( pDualElites->ShouldFlip() )
+							pWeapon->GetAttachment( iAttachment+2, attachOrigin, attachAngles );
+						else
+							pWeapon->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
+					}
+					else
+					{
+ 						pWeapon->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
+					}
+
+/////
+
  				}
  				else
  				{
  					C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
  					CBaseViewModel *vm = pPlayer->GetViewModel();
- 					vm->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
+
+/////
+					
+					// SO2 - James
+					// Fix dual Beretta 92s muzzleflash issue
+
+					//vm->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
+
+					CWeaponDualBeretta92s *pDualElites = dynamic_cast<CWeaponDualBeretta92s *>( pPlayer->GetActiveWeapon() );
+					if ( pDualElites )
+					{
+						if ( pDualElites->ShouldFlip() )
+							vm->GetAttachment( iAttachment+2, attachOrigin, attachAngles );
+						else
+							vm->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
+					}
+					else
+					{
+ 						vm->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
+					}
+
+/////
+
  					engine->GetViewAngles( attachAngles );
  				}
 

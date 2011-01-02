@@ -44,6 +44,7 @@ public:
 	// Add support for CS:S player animations
 	void DoAnimationEvent( PlayerAnimEvent_t event, int nData = 0 );
 	void SetupBones( matrix3x4_t *pBoneToWorld, int boneMask );
+	CNetworkVar( int, m_iThrowGrenadeCounter );	// used to trigger grenade throw animations.
 
 public:
 	void PickDefaultSpawnTeam( void );
@@ -68,8 +69,8 @@ public:
 	// Do not allow players to fire weapons on ladders
 	// http://articles.thewavelength.net/724/
 	// Do not allow players to fire weapons while sprinting
-	CBaseCombatWeapon* GetHolsteredWeapon( void ) { return m_pHolsteredWeapon; }
-	void SetHolsteredWeapon( CBaseCombatWeapon *m_pWeapon ) { m_pHolsteredWeapon = m_pWeapon; }
+	CBaseCombatWeapon* GetHolsteredWeapon( void ) { return m_hHolsteredWeapon; }
+	void SetHolsteredWeapon( CBaseCombatWeapon *pHolsteredWeapon ) { m_hHolsteredWeapon = pHolsteredWeapon; }
 
 	float GetModelChangeDelay( void ) { return m_flModelChangeDelay; }
 
@@ -85,7 +86,7 @@ private:
 	// Do not allow players to fire weapons on ladders
 	// http://articles.thewavelength.net/724/
 	// Do not allow players to fire weapons while sprinting
-	CBaseCombatWeapon *m_pHolsteredWeapon;
+	CNetworkHandle( CBaseCombatWeapon, m_hHolsteredWeapon );
 
 	// Base each player's speed on their health
 	float m_flSpeedCheckDelay;

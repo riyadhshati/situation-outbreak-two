@@ -1743,9 +1743,6 @@
     <ClCompile Include="..\shared\so2\weapon_deagle.cpp">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\so2\weapon_m3.cpp">
-      <Filter>Source Files\SO2\Weapons</Filter>
-    </ClCompile>
     <ClCompile Include="..\shared\so2\weapon_p228.cpp">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClCompile>
@@ -1772,6 +1769,57 @@
     </ClCompile>
     <ClCompile Include="..\shared\so2\so_playeranimstate.cpp">
       <Filter>Source Files\SO2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_ak47.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_m4a1.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_famas.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_galil.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_ump45.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_tmp.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_mac10.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_sg552.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_m249.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_fiveseven.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_usp.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_dualberetta92s.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_mp5n.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_fraggrenade.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="so2\so_fraggrenade.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_glock18.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_m3s90.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3494,9 +3542,6 @@
     <ClInclude Include="..\shared\so2\weapon_sobasehlmpcombatweapon.h">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\so2\weapon_aug.h">
-      <Filter>Source Files\SO2\Weapons</Filter>
-    </ClInclude>
     <ClInclude Include="..\shared\so2\weapon_sobase.h">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
@@ -3511,6 +3556,12 @@
     </ClInclude>
     <ClInclude Include="..\shared\so2\so_playeranimstate.h">
       <Filter>Source Files\SO2</Filter>
+    </ClInclude>
+    <ClInclude Include="so2\so_fraggrenade.h">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\so2\weapon_fraggrenade.h">
+      <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

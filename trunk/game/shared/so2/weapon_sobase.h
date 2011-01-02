@@ -1,8 +1,6 @@
 #ifndef SO_WEAPON_BASE_H
 #define SO_WEAPON_BASE_H
 
-#include "cbase.h"
-#include "npcevent.h"
 #include "weapon_hl2mpbase.h"
 
 #ifdef CLIENT_DLL
@@ -26,6 +24,10 @@ public:
 
 	// Add support for CS:S player animations
 	virtual const char *GetWeaponSuffix( void ) { return ""; }	// it is up to each weapon to override this in order for CS:S player animations to work properly
+
+	// Allow players to drop their active weapons
+	// Only drop weapons we're allowed to drop
+	virtual bool CanDrop( void ) { return true; }
 
 	// Add weapon bob
 	void AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles );

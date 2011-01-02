@@ -1,5 +1,5 @@
 // Add support for CS:S player animations
-// This file should closely resemble sdk_playeranimstate.cpp because it's practically that same file with some edits
+// This file should at least somewhat resemble sdk_playeranimstate.cpp because it is originally based on that file
 
 #include "cbase.h"
 #include "base_playeranimstate.h"
@@ -14,10 +14,12 @@
 #include "datacache/imdlcache.h"
 
 #ifdef CLIENT_DLL
-#include "c_so_player.h"
+	#include "c_so_player.h"
 #else
-#include "so_player.h"
+	#include "so_player.h"
 #endif
+
+#include "weapon_fraggrenade.h"
 
 #define SO_ANIM_RUN_SPEED 320.0f
 #define SO_ANIM_WALK_SPEED 75.0f
@@ -115,6 +117,9 @@ void CSOPlayerAnimState::InitSOAnimState( CSO_Player *pPlayer )
 //-----------------------------------------------------------------------------
 void CSOPlayerAnimState::ClearAnimationState( void )
 {
+	m_bThrowingGrenade = m_bPrimingGrenade = false;
+	m_iLastThrowGrenadeCounter = GetOuterGrenadeThrowCounter();
+
 	BaseClass::ClearAnimationState();
 
 	ClearAnimationLayers();
@@ -368,7 +373,7 @@ void CSOPlayerAnimState::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 		}
 
 		if ( event == PLAYERANIMEVENT_RELOAD )
-			iGestureActivity = ACT_VM_RELOAD;	// should not be needed for PLAYERANIMEVENT_RELOAD_LOOP and PLAYERANIMEVENT_RELOAD_END (at least not for shotguns)
+			iGestureActivity = ACT_VM_RELOAD;	// should not be needed for PLAYERANIMEVENT_RELOAD_LOOP or PLAYERANIMEVENT_RELOAD_END (at least not for shotguns)
 	}
 	else
 	{
@@ -557,14 +562,11 @@ int CSOPlayerAnimState::CalcFireLayerSequence( PlayerAnimEvent_t event )
 	const char *pSuffix = pWeapon->GetWeaponSuffix();
 	if ( !pSuffix )
 		return 0;
-	
-	// TODO: Grenades!
+
 	// Don't rely on their weapon here because the player has usually switched to their 
 	// pistol or rifle by the time the PLAYERANIMEVENT_THROW_GRENADE message gets to the client.
-	/*if ( event == PLAYERANIMEVENT_THROW_GRENADE )
-	{
+	if ( event == PLAYERANIMEVENT_ATTACK_GRENADE )
 		pSuffix = "Gren"; 
-	}*/
 
 	switch ( GetCurrentMainActivity() )
 	{
@@ -600,14 +602,6 @@ int CSOPlayerAnimState::CalcReloadLayerSequence( PlayerAnimEvent_t event )
 	const char *pSuffix = pWeapon->GetWeaponSuffix();
 	if ( !pSuffix )
 		return 0;
-	
-	// TODO: Grenades!
-	// Don't rely on their weapon here because the player has usually switched to their 
-	// pistol or rifle by the time the PLAYERANIMEVENT_THROW_GRENADE message gets to the client.
-	/*if ( event == PLAYERANIMEVENT_THROW_GRENADE )
-	{
-		pSuffix = "Gren"; 
-	}*/
 
 	// The CS:S shotgun reloading player animations are really stup-...I mean intuitive...and use a special animation set (grr)
 	// We account for this using various event conditionals and such
@@ -920,9 +914,7 @@ void CSOPlayerAnimState::ComputeSequences( CStudioHdr *pStudioHdr )
 
 	ComputeFireSequence( pStudioHdr );
 	ComputeReloadSequence( pStudioHdr );
-
-	// TODO: Grenades!
-	//ComputeGrenadeSequence( pStudioHdr );
+	ComputeGrenadeSequence( pStudioHdr );
 
 	// The groundspeed interpolator uses the main sequence info.
 	UpdateInterpolators();		
@@ -975,6 +967,114 @@ void CSOPlayerAnimState::UpdateLayerSequenceGeneric( CStudioHdr *pStudioHdr, int
 	pLayer->m_nOrder = iLayer;
 }
 #endif
+
+const float g_flThrowGrenadeFraction = 0.25;
+bool CSOPlayerAnimState::IsThrowingGrenade()
+{
+	if ( m_bThrowingGrenade )
+	{
+		// An animation event would be more appropriate here.
+		return m_flGrenadeCycle < g_flThrowGrenadeFraction;
+	}
+	else
+	{
+		bool bThrowPending = (m_iLastThrowGrenadeCounter != GetOuterGrenadeThrowCounter());
+		return bThrowPending || IsOuterGrenadePrimed();
+	}
+}
+
+bool CSOPlayerAnimState::IsOuterGrenadePrimed()
+{
+	CBaseCombatCharacter *pChar = GetSOPlayer()->MyCombatCharacterPointer();
+	if ( pChar )
+	{
+		CWeaponFragGrenade *pGren = dynamic_cast<CWeaponFragGrenade*>( pChar->GetActiveWeapon() );
+		return pGren && pGren->IsPrimed();
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+void CSOPlayerAnimState::ComputeGrenadeSequence( CStudioHdr *pStudioHdr )
+{
+#ifdef CLIENT_DLL
+	if ( m_bThrowingGrenade )
+	{
+		UpdateLayerSequenceGeneric( pStudioHdr, GRENADESEQUENCE_LAYER, m_bThrowingGrenade, m_flGrenadeCycle, m_iGrenadeSequence, false );
+	}
+	else
+	{
+		// Priming the grenade isn't an event.. we just watch the player for it.
+		// Also play the prime animation first if he wants to throw the grenade.
+		bool bThrowPending = (m_iLastThrowGrenadeCounter != GetOuterGrenadeThrowCounter());
+		if ( IsOuterGrenadePrimed() || bThrowPending )
+		{
+			if ( !m_bPrimingGrenade )
+			{
+				// If this guy just popped into our PVS, and he's got his grenade primed, then
+				// let's assume that it's all the way primed rather than playing the prime
+				// animation from the start.
+				if ( TimeSinceLastAnimationStateClear() < 0.4f )
+					m_flGrenadeCycle = 1;
+				else
+					m_flGrenadeCycle = 0;
+					
+				m_iGrenadeSequence = CalcGrenadePrimeSequence();
+			}
+
+			m_bPrimingGrenade = true;
+			UpdateLayerSequenceGeneric( pStudioHdr, GRENADESEQUENCE_LAYER, m_bPrimingGrenade, m_flGrenadeCycle, m_iGrenadeSequence, true );
+			
+			// If we're waiting to throw and we're done playing the prime animation...
+			if ( bThrowPending && m_flGrenadeCycle == 1 )
+			{
+				m_iLastThrowGrenadeCounter = GetOuterGrenadeThrowCounter();
+
+				// Now play the throw animation.
+				m_iGrenadeSequence = CalcGrenadeThrowSequence();
+				if ( m_iGrenadeSequence != -1 )
+				{
+					// Configure to start playing 
+					m_bThrowingGrenade = true;
+					m_bPrimingGrenade = false;
+					m_flGrenadeCycle = 0;
+				}
+			}
+		}
+		else
+		{
+			m_bPrimingGrenade = false;
+		}
+	}
+#endif
+}
+
+int CSOPlayerAnimState::CalcGrenadePrimeSequence()
+{
+	return CalcSequenceIndex( "idle_shoot_gren1" );
+}
+
+int CSOPlayerAnimState::CalcGrenadeThrowSequence()
+{
+	return CalcSequenceIndex( "idle_shoot_gren2" );
+}
+
+int CSOPlayerAnimState::GetOuterGrenadeThrowCounter()
+{
+	// Get the SO player.
+	CSO_Player *pPlayer = GetSOPlayer();
+	if ( pPlayer )
+		return pPlayer->m_iThrowGrenadeCounter;
+	else
+		return 0;
+}
+
+float CSOPlayerAnimState::TimeSinceLastAnimationStateClear() const
+{
+	return gpGlobals->curtime - m_flLastAnimationStateClearTime;
+}
 
 void CSOPlayerAnimState::ComputeFireSequence( CStudioHdr *pStudioHdr )
 {
