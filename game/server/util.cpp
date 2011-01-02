@@ -656,12 +656,10 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 	// http://developer.valvesoftware.com/wiki/Fixing_AI_in_multiplayer
 	// Custom player-finding functions for NPCs (based on stuff in link above, but not exactly the same)
 
-#define MAX_FLOAT_VALUE 3.40282346638528860e+38
-
 CBasePlayer *UTIL_GetNearestPlayer( const Vector &origin )
 {
 	CBasePlayer *pNearestPlayer = NULL;
-	float distToNearest = MAX_FLOAT_VALUE;
+	float distToNearest = FLT_MAX;
 
 	// Cycle through each player and see if they are closer than the last player we checked
 	// Assuming there's at least one player online, this should return the nearest player to our origin parameter
@@ -711,7 +709,7 @@ CBasePlayer *UTIL_GetNearestPlayer( const Vector &origin )
 CBasePlayer *UTIL_GetNearestVisiblePlayer( CBaseEntity *pLooker, int mask )
 {
 	CBasePlayer *pNearestPlayer = NULL;
-	float distToNearest = MAX_FLOAT_VALUE;
+	float distToNearest = FLT_MAX;
 
 	// Cycle through each player and see if they are closer than the last player we checked
 	// Assuming there's at least one player online, this should return the nearest player to our origin parameter

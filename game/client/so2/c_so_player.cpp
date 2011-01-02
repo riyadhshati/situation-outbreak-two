@@ -25,6 +25,13 @@ BEGIN_RECV_TABLE_NOBASE( C_SO_Player, DT_SONonLocalPlayerExclusive )
 END_RECV_TABLE()
 
 IMPLEMENT_CLIENTCLASS_DT( C_SO_Player, DT_SO_Player, CSO_Player )
+	// Add support for CS:S player animations
+	RecvPropInt( RECVINFO( m_iThrowGrenadeCounter ) ),
+
+	// Do not allow players to fire weapons on ladders
+	// http://articles.thewavelength.net/724/
+	// Do not allow players to fire weapons while sprinting
+	RecvPropEHandle( RECVINFO( m_hHolsteredWeapon ) ),
 END_RECV_TABLE()
 
 BEGIN_PREDICTION_DATA( C_SO_Player )
@@ -188,5 +195,15 @@ void C_SO_Player::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 	}
 
 	MDLCACHE_CRITICAL_SECTION();
-	m_SOPlayerAnimState->DoAnimationEvent( event, nData );
+
+	// Add support for CS:S player animations
+	if ( event == PLAYERANIMEVENT_ATTACK_GRENADE )
+	{
+		// Let the server handle this event. It will update m_iThrowGrenadeCounter and the client will
+		// pick up the event in CCSPlayerAnimState.
+	}
+	else
+	{
+		m_SOPlayerAnimState->DoAnimationEvent( event, nData );
+	}
 }

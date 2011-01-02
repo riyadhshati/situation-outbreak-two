@@ -446,7 +446,10 @@ void CSOGameRules::RestartGame()
 
 		pPlayer->RemoveAllItems( true );
 		pPlayer->ClearActiveWeapon();
-		pPlayer->Reset();
+
+		// Round system
+		// Don't reset players' progress just because of a simple round change
+		//pPlayer->Reset();
 	}
 
 	CleanUpMap();
@@ -746,6 +749,8 @@ CAmmoDef *GetAmmoDef()
 		def.AddAmmoType("smg",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			250,		BULLET_IMPULSE(200, 1225),	0 );
 		def.AddAmmoType("rifle",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			120,		BULLET_IMPULSE(200, 1225),	0 );
 		def.AddAmmoType("shotgun",			DMG_BULLET | DMG_BUCKSHOT,	TRACER_LINE,			0,			0,			40,			BULLET_IMPULSE(400, 1200),	0 );
+		def.AddAmmoType("machinegun",		DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			200,		BULLET_IMPULSE(200, 1225),	0 );
+		def.AddAmmoType("grenade",			DMG_BLAST,					TRACER_NONE,			0,			0,			3,			0,							0 );
 	}
 
 	return &def;

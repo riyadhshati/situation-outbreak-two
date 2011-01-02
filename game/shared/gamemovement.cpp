@@ -2912,10 +2912,10 @@ bool CGameMovement::LadderMove( void )
 	if ( pSOPlayer )
 	{
 		pSOPlayer->SetHolsteredWeapon( pSOPlayer->GetActiveWeapon() );
-		if ( pSOPlayer->GetHolsteredWeapon() )
-		{
-			pSOPlayer->GetHolsteredWeapon()->Holster();
-		}
+
+		CBaseCombatWeapon *pHolsteredWeapon = pSOPlayer->GetHolsteredWeapon();
+		if ( pHolsteredWeapon )
+			pHolsteredWeapon->Holster();
 	}
 #endif
 
@@ -4541,9 +4541,10 @@ void CGameMovement::PlayerMove( void )
 				CSO_Player *pSOPlayer = ToSOPlayer( player );
 				if ( pSOPlayer )
 				{
-					if ( pSOPlayer->GetHolsteredWeapon() )
+					CBaseCombatWeapon *pHolsteredWeapon = pSOPlayer->GetHolsteredWeapon();
+					if ( pHolsteredWeapon )
 					{
-						pSOPlayer->GetHolsteredWeapon()->Deploy();
+						pHolsteredWeapon->Deploy();
 						pSOPlayer->SetHolsteredWeapon( NULL );	// weapon is no longer holstered; reset variable
 					}
 				}

@@ -1,38 +1,18 @@
-
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
-//
-// Purpose: 
-//
-//=============================================================================//
-
 #include "cbase.h"
-#include "npcevent.h"
-#include "in_buttons.h"
-
-#ifdef CLIENT_DLL
-	#include "c_so_player.h"
-#else
-	#include "so_player.h"
-#endif
-
 #include "weapon_sobasehlmpcombatweapon.h"
 
 #ifdef CLIENT_DLL
 #define CWeaponDeagle C_WeaponDeagle
 #endif
 
-//-----------------------------------------------------------------------------
-// CWeaponDeagle
-//-----------------------------------------------------------------------------
-
 class CWeaponDeagle : public CBaseSOCombatWeapon
 {
 	DECLARE_CLASS( CWeaponDeagle, CBaseSOCombatWeapon );
-public:
 
+public:
 	CWeaponDeagle( void );
 
-	void	PrimaryAttack( void );
+	void PrimaryAttack( void );
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 
@@ -55,27 +35,18 @@ END_PREDICTION_DATA()
 LINK_ENTITY_TO_CLASS( weapon_deagle, CWeaponDeagle );
 PRECACHE_WEAPON_REGISTER( weapon_deagle );
 
-//-----------------------------------------------------------------------------
-// Purpose: Constructor
-//-----------------------------------------------------------------------------
 CWeaponDeagle::CWeaponDeagle( void )
 {
 	m_bReloadsSingly	= false;
 	m_bFiresUnderwater	= false;
 }
 
-//-----------------------------------------------------------------------------
-// Purpose:
-//-----------------------------------------------------------------------------
 void CWeaponDeagle::PrimaryAttack( void )
 {
 	// Only the player fires this way so we can cast
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-
 	if ( !pPlayer )
-	{
 		return;
-	}
 
 	if ( m_iClip1 <= 0 )
 	{
@@ -104,8 +75,8 @@ void CWeaponDeagle::PrimaryAttack( void )
 
 	m_iClip1--;
 
-	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
-	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );	
+	Vector vecSrc = pPlayer->Weapon_ShootPosition();
+	Vector vecAiming = pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );	
 
 	FireBulletsInfo_t info( 1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
 	info.m_pAttacker = pPlayer;

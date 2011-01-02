@@ -5,15 +5,15 @@
 #include "tier0/memdbgon.h"
 
 #ifdef CLIENT_DLL
-#define CWeaponP90 C_WeaponP90
+#define CWeaponUMP45 C_WeaponUMP45
 #endif
 
-class CWeaponP90 : public CSOMachineGun
+class CWeaponUMP45 : public CSOMachineGun
 {
 public:
-	DECLARE_CLASS( CWeaponP90, CSOMachineGun );
+	DECLARE_CLASS( CWeaponUMP45, CSOMachineGun );
 
-	CWeaponP90();
+	CWeaponUMP45();
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
@@ -22,7 +22,7 @@ public:
 
 	int GetMinBurst( void ) { return 1; }
 	int GetMaxBurst( void ) { return 1; }
-	float GetFireRate( void ) { return 0.067f; }	// about 15Hz
+	float GetFireRate( void ) { return 0.1f; }	// 10Hz
 
 	Activity GetPrimaryAttackActivity( void );
 
@@ -36,48 +36,48 @@ public:
 	const WeaponProficiencyInfo_t *GetProficiencyValues();
 
 	// Add support for CS:S player animations
-	const char *GetWeaponSuffix( void ) { return "P90"; }
+	const char *GetWeaponSuffix( void ) { return "UMP45"; }
 
 private:
-	CWeaponP90( const CWeaponP90 & );
+	CWeaponUMP45( const CWeaponUMP45 & );
 };
 
-IMPLEMENT_NETWORKCLASS_ALIASED( WeaponP90, DT_WeaponP90 )
+IMPLEMENT_NETWORKCLASS_ALIASED( WeaponUMP45, DT_WeaponUMP45 )
 
-BEGIN_NETWORK_TABLE( CWeaponP90, DT_WeaponP90 )
+BEGIN_NETWORK_TABLE( CWeaponUMP45, DT_WeaponUMP45 )
 END_NETWORK_TABLE()
 
-BEGIN_PREDICTION_DATA( CWeaponP90 )
+BEGIN_PREDICTION_DATA( CWeaponUMP45 )
 END_PREDICTION_DATA()
 
-LINK_ENTITY_TO_CLASS( weapon_p90, CWeaponP90 );
-PRECACHE_WEAPON_REGISTER( weapon_p90 );
+LINK_ENTITY_TO_CLASS( weapon_ump45, CWeaponUMP45 );
+PRECACHE_WEAPON_REGISTER( weapon_ump45 );
 
-CWeaponP90::CWeaponP90()
+CWeaponUMP45::CWeaponUMP45()
 {
 	m_fMinRange1 = 0;	// in inches; no minimum range
-	m_fMaxRange1 = 7874;	// in inches; about 200 meters
+	m_fMaxRange1 = 1969;	// in inches; about 50 meters
 }
 
-Activity CWeaponP90::GetPrimaryAttackActivity( void )
+Activity CWeaponUMP45::GetPrimaryAttackActivity( void )
 {
 	return ACT_VM_PRIMARYATTACK;
 }
 
-void CWeaponP90::AddViewKick( void )
+void CWeaponUMP45::AddViewKick( void )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 	if ( !pPlayer )
 		return;
 
 	#define	EASY_DAMPEN 0.5f
-	#define	MAX_VERTICAL_KICK 2.0f	// in degrees
-	#define	SLIDE_LIMIT 1.0f	// in seconds
+	#define	MAX_VERTICAL_KICK 3.0f	// in degrees
+	#define	SLIDE_LIMIT 2.0f	// in seconds
 
 	DoMachineGunKick( pPlayer, EASY_DAMPEN, MAX_VERTICAL_KICK, m_fFireDuration, SLIDE_LIMIT );
 }
 
-const WeaponProficiencyInfo_t *CWeaponP90::GetProficiencyValues()
+const WeaponProficiencyInfo_t *CWeaponUMP45::GetProficiencyValues()
 {
 	static WeaponProficiencyInfo_t proficiencyTable[] =
 	{

@@ -37,6 +37,12 @@ public:
 	void UpdateClientSideAnimation();
 	CStudioHdr *OnNewModel( void );
 	void DoAnimationEvent( PlayerAnimEvent_t event, int nData = 0 );
+	int m_iThrowGrenadeCounter;	// used to trigger grenade throw animations.
+
+	// Do not allow players to fire weapons on ladders
+	// http://articles.thewavelength.net/724/
+	// Do not allow players to fire weapons while sprinting
+	CBaseCombatWeapon* GetHolsteredWeapon( void ) { return m_hHolsteredWeapon; }
 
 public:
 	// First-person ragdolls
@@ -53,6 +59,11 @@ private:
 
 	// Add support for CS:S player animations
 	CSOPlayerAnimState *m_SOPlayerAnimState;
+
+	// Do not allow players to fire weapons on ladders
+	// http://articles.thewavelength.net/724/
+	// Do not allow players to fire weapons while sprinting
+	CHandle<CBaseCombatWeapon> m_hHolsteredWeapon;
 };
 
 inline C_SO_Player *ToSOPlayer( CBaseEntity *pEntity )
