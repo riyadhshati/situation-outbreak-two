@@ -1,0 +1,9 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models\weapons\v_models\shot_xm1014\shot_xm1014"
+	"$bumpmap" "models\weapons\v_models\shot_xm1014\shot_xm1014_ref"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" 1
+
+}
+

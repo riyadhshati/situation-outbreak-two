@@ -1,0 +1,9 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models\weapons\v_models\smg_mp5\mp5_1"
+	"$bumpmap" "models\weapons\v_models\smg_mp5\mp5_1_ref"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" 1
+
+}
+

@@ -1,0 +1,9 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models\weapons\v_models\pist_deagle\deagle_skin1"
+	"$bumpmap" "models\weapons\v_models\pist_deagle\deagle_skin1_ref"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" 1
+
+}
+

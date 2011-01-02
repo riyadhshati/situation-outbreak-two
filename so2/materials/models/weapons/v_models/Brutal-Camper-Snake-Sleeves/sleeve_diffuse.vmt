@@ -1,5 +1,0 @@
-VertexLitGeneric
-{
-	"$baseTexture" "models\weapons\v_models\Brutal-Camper-Snake-Sleeves\sleeve_diffuse"
-	"$bumpmap"     "models\weapons\v_models\Brutal-Camper-Snake-Sleeves\sleeve_normal"
-}

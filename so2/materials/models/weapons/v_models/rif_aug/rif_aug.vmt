@@ -1,0 +1,9 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models\weapons\v_models\rif_aug\rif_aug"
+	"$bumpmap" "models\weapons\v_models\rif_aug\rif_aug_ref"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" 1
+
+}
+

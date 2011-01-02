@@ -1,0 +1,11 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models\weapons\v_models\smg_p90\smg_p90"
+	"$bumpmap" "models\weapons\v_models\smg_p90\smg_p90_phong"
+	"$phong" "1"
+	"$phongexponent" "45"
+	"$phongboost"	"1"
+	"$phongfresnelranges"	"[1 8 6]"
+
+}
+

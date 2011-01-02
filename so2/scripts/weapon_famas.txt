@@ -1,0 +1,72 @@
+// FAMAS
+
+WeaponData
+{
+	// Weapon data is loaded by both the Game and Client DLLs.
+	"printname"	"FAMAS"
+	"viewmodel"			"models/weapons/v_rif_famas.mdl"
+	"playermodel"			"models/weapons/w_rif_famas.mdl"
+	"anim_prefix"			"ar2"
+	"bucket"			"1"
+	"bucket_position"		"0"
+
+	"clip_size"			"25"
+	"default_clip"			"25"
+
+	"clip2_size"			"-1"
+	"default_clip2"			"-1"
+
+	"primary_ammo"			"rifle"
+	"secondary_ammo"		"None"
+
+	"weight"			"5"
+	"item_flags"			"0"
+	"damage"			"17"
+
+	"BuiltRightHanded"		"1"
+	"AllowFlipping"			"1"
+
+	// Sounds for the weapon. There is a max of 16 sounds per category (i.e. max 16 "single_shot" sounds)
+	SoundData
+	{
+		"single_shot"		"Weapon_FAMAS.Single"
+	}
+
+	// Weapon Sprite data is loaded by the Client DLL.
+	TextureData
+	{
+		"weapon"
+		{
+				"font"		"WeaponIcons"
+				"character"	"l"
+		}
+		"weapon_s"
+		{	
+				"font"		"WeaponIconsSelected"
+				"character"	"l"
+		}
+		"ammo"
+		{
+				"font"		"WeaponIcons"
+				"character"	"u"
+		}
+		"ammo2"
+		{
+				"font"		"WeaponIcons"
+				"character"	"z"
+		}
+		"crosshair"
+		{
+				"font"		"Crosshairs"
+				"character"	"Q"
+		}
+		"autoaim"
+		{
+				"file"		"sprites/crosshairs"
+				"x"			"0"
+				"y"			"48"
+				"width"		"24"
+				"height"	"24"
+		}
+	}
+}

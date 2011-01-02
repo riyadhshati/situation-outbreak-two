@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\weapons\v_models\pist_p228\pist_p228_1"
+	"$selfillum" "1"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models\weapons\v_models\pist_p228\pist_p228_1_ref"
+	"$envmapcontrast" ".7"
+	"$envmapsaturation" "[.8 .8 .8]"
+
+
+}
+	

@@ -1,0 +1,9 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models\weapons\v_models\pist_usp\metal"
+	"$bumpmap" "models\weapons\v_models\pist_usp\metal_ref"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" 1
+
+}
+

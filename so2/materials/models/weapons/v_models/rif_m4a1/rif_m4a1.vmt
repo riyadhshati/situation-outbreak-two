@@ -1,0 +1,11 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models\weapons\v_models\rif_m4a1\rif_m4a1"
+	"$bumpmap" "models\weapons\v_models\rif_m4a1\rif_m4a1_ref"
+	"$phong" "1"
+	"$phongexponent" "45"
+	"$phongboost"	"1"
+	"$phongfresnelranges"	"[1 8 6]"
+
+}
+

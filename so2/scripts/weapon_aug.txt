@@ -1,17 +1,17 @@
-// Steyr AUG
+// AUG
 
 WeaponData
 {
 	// Weapon data is loaded by both the Game and Client DLLs.
-	"printname"	"Steyr AUG"
+	"printname"	"AUG"
 	"viewmodel"			"models/weapons/v_rif_aug.mdl"
 	"playermodel"			"models/weapons/w_rif_aug.mdl"
 	"anim_prefix"			"ar2"
-	"bucket"			"2"
-	"bucket_position"		"1"
+	"bucket"			"1"
+	"bucket_position"		"0"
 
 	"clip_size"			"30"
-	"default_clip"			"60"
+	"default_clip"			"30"
 
 	"clip2_size"			"-1"
 	"default_clip2"			"-1"
@@ -22,6 +22,9 @@ WeaponData
 	"weight"			"5"
 	"item_flags"			"0"
 	"damage"			"17"
+
+	"BuiltRightHanded"		"0"
+	"AllowFlipping"			"1"
 
 	// Sounds for the weapon. There is a max of 16 sounds per category (i.e. max 16 "single_shot" sounds)
 	SoundData

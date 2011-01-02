@@ -1,0 +1,10 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models/weapons/w_models/w_smg_mac10/w_smg_mac10"
+	"$envmapmask" "models/weapons/w_models/w_smg_mac10/w_smg_mac10_ref"
+	"$phong" "1"
+	"$phongexponent" "45"
+	"$phongboost"	"1"
+	"$phongfresnelranges"	"[1 8 6]"
+
+}
