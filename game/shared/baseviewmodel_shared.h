@@ -168,6 +168,19 @@ public:
 	virtual bool			GetAttachmentVelocity( int number, Vector &originVel, Quaternion &angleVel );
 #endif
 
+/////
+
+	// SO2 - James
+	// Weapon reorigin system
+	// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+	// Modified a bit from the wiki version considering our system's purpose
+
+#ifdef CLIENT_DLL
+	void CalcReorigin( Vector &pos, QAngle &ang );
+#endif
+
+/////
+
 private:
 	CBaseViewModel( const CBaseViewModel & ); // not defined, not accessible
 

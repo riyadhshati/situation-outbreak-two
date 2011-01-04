@@ -63,7 +63,7 @@ void CWeaponFragGrenade::Precache( void )
 	BaseClass::Precache();
 
 #ifndef CLIENT_DLL
-	UTIL_PrecacheOther( "npc_grenade_frag" );
+	UTIL_PrecacheOther( "so_fraggrenade" );
 #endif
 
 	PrecacheScriptSound( "WeaponFragGrenade.Throw" );

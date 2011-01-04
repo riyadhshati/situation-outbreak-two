@@ -10,10 +10,8 @@
 #pragma once
 #endif
 
-
 #include "weapon_parse.h"
 #include "networkvar.h"
-
 
 //--------------------------------------------------------------------------------------------------------
 class CHL2MPSWeaponInfo : public FileWeaponInfo_t
@@ -25,11 +23,20 @@ public:
 	
 	virtual void Parse( ::KeyValues *pKeyValuesData, const char *szWeaponName );
 
-
 public:
-
 	int m_iPlayerDamage;
-};
 
+/////
+
+	// Weapon reorigin system
+	// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+	// Modified a bit from the wiki version considering our system's purpose
+	Vector vecIronsightPosOffset;
+	QAngle angIronsightAngOffset;
+	float flIronsightFOVOffset;
+
+/////
+
+};
 
 #endif // HL2MP_WEAPON_PARSE_H

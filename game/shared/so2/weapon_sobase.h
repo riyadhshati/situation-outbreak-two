@@ -20,6 +20,8 @@ public:
 public:
 	void Spawn( void );
 	void ItemPostFrame( void );
+
+	// Weapon accuracy system
 	float GetAccuracyModifier( void );
 
 	// Add support for CS:S player animations
@@ -32,6 +34,13 @@ public:
 	// Add weapon bob
 	void AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles );
 	float CalcViewmodelBob( void );
+
+	// Weapon reorigin system
+	// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+	// Modified a bit from the wiki version considering our system's purpose
+	Vector GetIronsightPositionOffset( void ) const;
+	QAngle GetIronsightAngleOffset( void ) const;
+	float GetIronsightFOVOffset( void ) const;
 
 protected:
 	// Add support for CS:S player animations

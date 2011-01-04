@@ -3566,6 +3566,9 @@
     <ClInclude Include="..\shared\so2\weapon_fraggrenade.h">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
+    <ClInclude Include="..\shared\so2\weapon_dualberetta92s.h">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\lib\public\choreoobjects.lib">

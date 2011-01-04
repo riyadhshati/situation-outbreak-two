@@ -10,6 +10,23 @@
 	#include "so_player.h"
 #endif
 
+#include "dt_recv.h"
+
+// Weapon reorigin system
+// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+// Modified a bit from the wiki version considering our system's purpose
+//forward declarations of callbacks used by viewmodel_adjust_enable and viewmodel_adjust_fov
+void vm_adjust_enable_callback( IConVar *pConVar, char const *pOldString, float flOldValue );
+void vm_adjust_fov_callback( IConVar *pConVar, const char *pOldString, float flOldValue );
+ConVar viewmodel_adjust_forward( "viewmodel_adjust_forward", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_right( "viewmodel_adjust_right", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_up( "viewmodel_adjust_up", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_pitch( "viewmodel_adjust_pitch", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_yaw( "viewmodel_adjust_yaw", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_roll( "viewmodel_adjust_roll", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_fov( "viewmodel_adjust_fov", "0", FCVAR_REPLICATED, "Note: this feature is not available during any kind of zoom", vm_adjust_fov_callback );
+ConVar viewmodel_adjust_enabled( "viewmodel_adjust_enabled", "0", FCVAR_REPLICATED|FCVAR_CHEAT, "enabled viewmodel adjusting", vm_adjust_enable_callback );
+
 IMPLEMENT_NETWORKCLASS_ALIASED( WeaponSOBase, DT_WeaponSOBase )
 
 BEGIN_NETWORK_TABLE( CWeaponSOBase, DT_WeaponSOBase )
@@ -60,6 +77,7 @@ void CWeaponSOBase::ItemPostFrame( void )
 	BaseClass::ItemPostFrame();
 }
 
+// Weapon accuracy system
 float CWeaponSOBase::GetAccuracyModifier()
 {
 	float weaponAccuracy = 1.0f; // by default, don't make any alterations
@@ -225,3 +243,62 @@ void CWeaponSOBase::AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, 
 }
 
 #endif
+
+// Weapon reorigin system
+// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+// Modified a bit from the wiki version considering our system's purpose
+Vector CWeaponSOBase::GetIronsightPositionOffset( void ) const
+{
+	if( viewmodel_adjust_enabled.GetBool() )
+		return Vector( viewmodel_adjust_forward.GetFloat(), viewmodel_adjust_right.GetFloat(), viewmodel_adjust_up.GetFloat() );
+	return GetHL2MPWpnData().vecIronsightPosOffset;
+}
+QAngle CWeaponSOBase::GetIronsightAngleOffset( void ) const
+{
+	if( viewmodel_adjust_enabled.GetBool() )
+		return QAngle( viewmodel_adjust_pitch.GetFloat(), viewmodel_adjust_yaw.GetFloat(), viewmodel_adjust_roll.GetFloat() );
+	return GetHL2MPWpnData().angIronsightAngOffset;
+}
+float CWeaponSOBase::GetIronsightFOVOffset( void ) const
+{
+	if( viewmodel_adjust_enabled.GetBool() )
+		return viewmodel_adjust_fov.GetFloat();
+	return GetHL2MPWpnData().flIronsightFOVOffset;
+}
+
+// Weapon reorigin system
+// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+// Modified a bit from the wiki version considering our system's purpose
+void vm_adjust_enable_callback( IConVar *pConVar, char const *pOldString, float flOldValue )
+{
+	ConVarRef sv_cheats( "sv_cheats" );
+	if( !sv_cheats.IsValid() || sv_cheats.GetBool() )
+		return;
+ 
+	ConVarRef var( pConVar );
+ 
+	if( var.GetBool() )
+		var.SetValue( "0" );
+}
+void vm_adjust_fov_callback( IConVar *pConVar, char const *pOldString, float flOldValue )
+{
+	if( !viewmodel_adjust_enabled.GetBool() )
+		return;
+ 
+	ConVarRef var( pConVar );
+ 
+	CBasePlayer *pPlayer = 
+#ifdef GAME_DLL
+		UTIL_GetLocalPlayer();
+#else
+		C_BasePlayer::GetLocalPlayer();
+#endif
+	if( !pPlayer )
+		return;
+ 
+	if( !pPlayer->SetFOV( pPlayer, pPlayer->GetDefaultFOV()+var.GetFloat(), 0.1f ) )
+	{
+		Warning( "Could not set FOV\n" );
+		var.SetValue( "0" );
+	}
+}
