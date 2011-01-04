@@ -15,6 +15,17 @@
 #include "vguiscreen.h"
 #endif
 
+/////
+
+	// SO2 - James
+	// Weapon reorigin system
+	// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+	// Modified a bit from the wiki version considering our system's purpose
+
+#include "weapon_sobase.h"
+
+/////
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -370,7 +381,48 @@ void CBaseViewModel::SendViewModelMatchingSequence( int sequence )
 #include "ivieweffects.h"
 #endif
 
-void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePosition, const QAngle& eyeAngles )
+/////
+
+	// SO2 - James
+	// Weapon reorigin system
+	// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+	// Modified a bit from the wiki version considering our system's purpose
+
+#ifdef CLIENT_DLL
+void CBaseViewModel::CalcReorigin( Vector &pos, QAngle &ang )
+{
+	CWeaponSOBase *pWeapon = dynamic_cast<CWeaponSOBase*>( GetOwningWeapon() );
+	if ( !pWeapon )
+		return;
+ 
+	Vector newPos = pos;
+	QAngle newAng = ang;
+ 
+	Vector vForward, vRight, vUp, vOffset;
+	AngleVectors( newAng, &vForward, &vRight, &vUp );
+	vOffset = pWeapon->GetIronsightPositionOffset();
+ 
+	newPos += vForward * vOffset.x;
+	newPos += vRight * vOffset.y;
+	newPos += vUp * vOffset.z;
+	newAng += pWeapon->GetIronsightAngleOffset();
+	//fov is handled by CWeaponSOBase
+ 
+	pos += ( newPos - pos );
+	ang += ( newAng - ang );
+}
+#endif
+
+/////
+
+/////
+
+	// SO2 - James
+	// Weapon reorigin system
+	// http://developer.valvesoftware.com/wiki/Adding_Ironsights
+	// Modified a bit from the wiki version considering our system's purpose
+
+/*void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePosition, const QAngle& eyeAngles )
 {
 	// UNDONE: Calc this on the server?  Disabled for now as it seems unnecessary to have this info on the server
 #if defined( CLIENT_DLL )
@@ -407,7 +459,46 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	SetLocalAngles( vmangles );
 
 #endif
+}*/
+
+// Cleaned up this function a bit from its original, too
+void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePosition, const QAngle& eyeAngles )
+{
+#ifdef CLIENT_DLL
+	QAngle vmangoriginal = eyeAngles;
+	QAngle vmangles = eyeAngles;
+	Vector vmorigin = eyePosition;
+
+	CWeaponSOBase *pWeapon = dynamic_cast<CWeaponSOBase*>( GetOwningWeapon() );
+	if ( pWeapon )
+	{
+		CalcReorigin( vmorigin, vmangles );
+
+		if ( !prediction->InPrediction() )
+		{
+			// add weapon-specific bob 
+			pWeapon->AddViewmodelBob( this, vmorigin, vmangles );
+		}
+	}
+
+	// Add model-specific bob even if no weapon associated (for head bob for off hand models)
+	AddViewModelBob( owner, vmorigin, vmangles );
+
+	// Add lag
+	CalcViewModelLag( vmorigin, vmangles, vmangoriginal );
+
+	if ( !prediction->InPrediction() )
+	{
+		// Let the viewmodel shake at about 10% of the amplitude of the player's view
+		vieweffects->ApplyShake( vmorigin, vmangles, 0.1 );	
+	}
+
+	SetLocalOrigin( vmorigin );
+	SetLocalAngles( vmangles );
+#endif
 }
+
+/////
 
 //-----------------------------------------------------------------------------
 // Purpose: 

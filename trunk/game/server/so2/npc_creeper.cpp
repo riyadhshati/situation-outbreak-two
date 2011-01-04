@@ -109,10 +109,6 @@ public:
 	int SelectFailSchedule( int failedSchedule, int failedTask, AI_TaskFailureCode_t taskFailCode );
 	int TranslateSchedule( int scheduleType );
 
-#ifndef HL2_EPISODIC
-	void CheckFlinches() {} // Zombie has custom flinch code
-#endif // HL2_EPISODIC
-
 	Activity NPC_TranslateActivity( Activity newActivity );
 
 	void OnStateChange( NPC_STATE OldState, NPC_STATE NewState );
@@ -961,33 +957,25 @@ void CNPC_Creeper::Extinguish()
 //---------------------------------------------------------
 int CNPC_Creeper::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 {
-#ifndef HL2_EPISODIC
-	if ( inputInfo.GetDamageType() & DMG_BUCKSHOT )
-	{
-		if( !m_fIsTorso && inputInfo.GetDamage() > (m_iMaxHealth/3) )
-		{
-			// Always flinch if damaged a lot by buckshot, even if not shot in the head.
-			// The reason for making sure we did at least 1/3rd of the zombie's max health
-			// is so the zombie doesn't flinch every time the odd shotgun pellet hits them,
-			// and so the maximum number of times you'll see a zombie flinch like this is 2.(sjb)
-			AddGesture( ACT_GESTURE_FLINCH_HEAD );
-		}
-	}
-#endif // HL2_EPISODIC
+	CTakeDamageInfo info = inputInfo;
+
+	if ( m_bHeadShot )
+		info.ScaleDamage( 2.0f );	// headshots hurt...a lot
+	else
+		info.ScaleDamage( 0.5f );	// other things do not as much
 
 	// Throw some blood on the ground when we take damage (adds some realism)
 	trace_t	tr;
 	AI_TraceLine( GetAbsOrigin()+Vector(0,0,1), GetAbsOrigin()-Vector(0,0,64), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	UTIL_BloodDecalTrace( &tr, BloodColor() );
 
-	return BaseClass::OnTakeDamage_Alive( inputInfo );
+	return BaseClass::OnTakeDamage_Alive( info );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 bool CNPC_Creeper::IsHeavyDamage( const CTakeDamageInfo &info )
 {
-#ifdef HL2_EPISODIC
 	if ( info.GetDamageType() & DMG_BUCKSHOT )
 	{
 		if ( !m_fIsTorso && info.GetDamage() > (m_iMaxHealth/3) )
@@ -1010,7 +998,6 @@ bool CNPC_Creeper::IsHeavyDamage( const CTakeDamageInfo &info )
 			return true;
 		}
 	}
-#endif // HL2_EPISODIC
 
 	return BaseClass::IsHeavyDamage(info);
 }

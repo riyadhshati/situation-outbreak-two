@@ -36,6 +36,7 @@ bool CSO_Player::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 Vector CSO_Player::GetAttackSpread( CWeaponSOBase *pWeapon, CBaseEntity *pTarget )
 {
+	// Weapon accuracy system
 	// CWeaponSOBase::GetAccuracyModifier() handles player-specific conditions, so factor that into our calculation
 	if ( pWeapon )
 		return pWeapon->GetBulletSpread( WEAPON_PROFICIENCY_PERFECT ) * pWeapon->GetAccuracyModifier();

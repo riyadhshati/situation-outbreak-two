@@ -955,6 +955,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "c:\program file
     <ClInclude Include="..\shared\so2\so_gamerules.h" />
     <ClInclude Include="..\shared\so2\so_playeranimstate.h" />
     <ClInclude Include="..\shared\so2\so_player_shared.h" />
+    <ClInclude Include="..\shared\so2\weapon_dualberetta92s.h" />
     <ClInclude Include="..\shared\so2\weapon_fraggrenade.h" />
     <ClInclude Include="..\shared\so2\weapon_sobase.h" />
     <ClInclude Include="..\shared\so2\weapon_sobasehlmpcombatweapon.h" />
