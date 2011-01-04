@@ -69,4 +69,15 @@ WeaponData
 				"height"	"24"
 		}
 	}
+
+	Reorigin
+	{
+		"forward"	"-2"
+		"right"		"2"
+		"up"		"1"
+		"pitch"		"0"
+		"yaw"		"0"
+		"roll"		"0"
+		"fov"		"0"
+	}
 }
