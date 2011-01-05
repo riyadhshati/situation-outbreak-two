@@ -20,6 +20,11 @@
 
 #include "npc_so_BaseZombie.h"
 
+// Blood loss system
+#include "particle_parse.h"
+#include "so_player.h"
+#include "team.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -94,9 +99,14 @@ public:
 	 : m_DurationDoorBash( 2, 6),
 	   m_NextTimeToStartDoorBash( 3.0 )
 	{
+		// Blood loss system
+		m_bLosingBlood = false;
+		m_hBleedAttacker = NULL;
+		m_flBleedTime = 0.0f;
 	}
 
 	void Spawn( void );
+	void NPCThink( void );
 	void Precache( void );
 
 	void SetZombieModel( void );
@@ -131,6 +141,7 @@ public:
 	void Ignite( float flFlameLifetime, bool bNPCOnly = true, float flSize = 0.0f, bool bCalledByLevelDesigner = false );
 	void Extinguish();
 	int OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
+	void Event_Killed( const CTakeDamageInfo &info );
 	bool IsHeavyDamage( const CTakeDamageInfo &info );
 	bool IsSquashed( const CTakeDamageInfo &info );
 	void BuildScheduleTestBits( void );
@@ -168,6 +179,11 @@ private:
 	CSimTimer 	  		 m_NextTimeToStartDoorBash;
 
 	Vector				 m_vPositionCharged;
+
+	// Blood loss system
+	bool m_bLosingBlood;
+	EHANDLE m_hBleedAttacker;
+	float m_flBleedTime;
 };
 
 LINK_ENTITY_TO_CLASS( npc_creeper, CNPC_Creeper );
@@ -234,7 +250,6 @@ BEGIN_DATADESC( CNPC_Creeper )
 
 END_DATADESC()
 
-
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -277,6 +292,10 @@ void CNPC_Creeper::Precache( void )
 	PrecacheScriptSound( "NPC_BaseZombie.Moan2" );
 	PrecacheScriptSound( "NPC_BaseZombie.Moan3" );
 	PrecacheScriptSound( "NPC_BaseZombie.Moan4" );
+
+	// Blood loss system
+	PrecacheParticleSystem( "blood_advisor_puncture_withdraw" );
+	PrecacheScriptSound( "NPC_Creeper.HeadSquirt" );
 }
 
 //-----------------------------------------------------------------------------
@@ -315,6 +334,30 @@ void CNPC_Creeper::Spawn( void )
 	//ChangeTeam( TEAM_ZOMBIES );
 
 	m_flNextMoanSound = gpGlobals->curtime + random->RandomFloat( 1.0, 4.0 );
+}
+
+void CNPC_Creeper::NPCThink( void )
+{
+	BaseClass::NPCThink();
+
+	// Blood loss system
+	if ( m_bLosingBlood && (gpGlobals->curtime >= m_flBleedTime) && IsAlive() )	// too much blood loss? not dead yet? well, prepare to die zombitch!
+	{
+		KillMe();	// IT'S OVER.
+
+		// It's important we credit the player who caused the bleeding for their work in killing this zombie
+		CSO_Player *pBleedAttacker = ToSOPlayer( dynamic_cast<CBasePlayer*>( m_hBleedAttacker.Get() ) );
+		if ( pBleedAttacker && pBleedAttacker->IsPlayer() )
+		{
+			pBleedAttacker->IncrementFragCount( 1 );
+			GetGlobalTeam( pBleedAttacker->GetTeamNumber() )->AddScore( 1 );
+		}
+
+		// Reset all the variables that got us here
+		m_bLosingBlood = false;
+		m_hBleedAttacker = NULL;
+		m_flBleedTime = 0.0f;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -765,7 +808,18 @@ Activity CNPC_Creeper::NPC_TranslateActivity( Activity newActivity )
 		return ACT_WALK;
 
 	// Allows for jumping, etc.
-	if ( (newActivity == ACT_JUMP) || (newActivity == ACT_HOP) || (newActivity == ACT_LEAP) )
+	// TODO: We could use a better system or even new animations here...
+	if ( (newActivity == ACT_FLY) ||
+		 (newActivity == ACT_HOVER) ||
+		 (newActivity == ACT_GLIDE) ||
+		 (newActivity == ACT_SWIM) ||
+		 (newActivity == ACT_JUMP) ||
+		 (newActivity == ACT_HOP) ||
+		 (newActivity == ACT_LEAP) ||
+		 (newActivity == ACT_LAND) ||
+		 (newActivity == ACT_CLIMB_UP) ||
+		 (newActivity == ACT_CLIMB_DOWN) ||
+		 (newActivity == ACT_CLIMB_DISMOUNT) )
 	{
 		return ACT_WALK_ON_FIRE;
 	}
@@ -960,9 +1014,35 @@ int CNPC_Creeper::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	CTakeDamageInfo info = inputInfo;
 
 	if ( m_bHeadShot )
-		info.ScaleDamage( 2.0f );	// headshots hurt...a lot
+	{
+		info.ScaleDamage( 2.0f );	// headshots hurt us a lot!
+
+		// Blood loss system
+		int shouldHeadExplode = random->RandomInt( 1, 10 );	// there's a 10% chance of our head bleeding when we get shot in the head
+		if ( shouldHeadExplode == 1 )	// sorry zombie, but here it comes!
+		{
+			EmitSound( "NPC_Creeper.HeadSquirt" ); // the sound...
+
+			DispatchParticleEffect( "blood_advisor_puncture_withdraw", PATTACH_POINT_FOLLOW, this, "eyes" );	// the blood...
+
+			AddFlag( FL_ONFIRE );	// this could have some nasty side-effects, but oh well!
+			RemoveSpawnFlags( SF_NPC_GAG );
+			MoanSound( envZombieMoanIgnited_creeper, ARRAYSIZE( envZombieMoanIgnited_creeper ) );
+			if ( m_pMoanSound )	// begin moaning like we're on fire since bleeding hurts :(
+			{
+				ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, 120, 1.0 );
+				ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 1, 1.0 );
+			}
+
+			m_bLosingBlood = true;
+			m_hBleedAttacker = info.GetAttacker();
+			m_flBleedTime = gpGlobals->curtime + 2.0f;	// we're bleeding from our head, which means we should die pretty soon
+		}
+	}
 	else
-		info.ScaleDamage( 0.5f );	// other things do not as much
+	{
+		info.ScaleDamage( 0.5f );	// other things do not hurt as much (we can survive with damaged limbs and whatnot)
+	}
 
 	// Throw some blood on the ground when we take damage (adds some realism)
 	trace_t	tr;
@@ -970,6 +1050,17 @@ int CNPC_Creeper::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	UTIL_BloodDecalTrace( &tr, BloodColor() );
 
 	return BaseClass::OnTakeDamage_Alive( info );
+}
+
+void CNPC_Creeper::Event_Killed( const CTakeDamageInfo &info )
+{
+	// Blood loss system
+	StopSound( "NPC_Creeper.HeadSquirt" );
+	StopParticleEffects( this );	// make sure we end any attachment-based particle effects here
+									// not doing so would make them float around in the air because we're about to become a ragdoll
+									// actually, we may have become one already (not sure how it works), but better late than never
+
+	BaseClass::Event_Killed( info );
 }
 
 //-----------------------------------------------------------------------------

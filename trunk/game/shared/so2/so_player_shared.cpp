@@ -37,9 +37,17 @@ bool CSO_Player::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 Vector CSO_Player::GetAttackSpread( CWeaponSOBase *pWeapon, CBaseEntity *pTarget )
 {
 	// Weapon accuracy system
-	// CWeaponSOBase::GetAccuracyModifier() handles player-specific conditions, so factor that into our calculation
 	if ( pWeapon )
-		return pWeapon->GetBulletSpread( WEAPON_PROFICIENCY_PERFECT ) * pWeapon->GetAccuracyModifier();
+	{
+		float weaponAccuracy = 1.0f; // by default, don't make any alterations
+
+		if ( !(GetFlags() & FL_ONGROUND) )	// player is not on the ground; fuck with their accuracy
+			weaponAccuracy *= 3.0f;	// this isn't done in CWeaponSOBase::GetAccuracyModifier() because some weapons override that function
+									// after all, no weapon should be spared from a loss in accuracy because of jumping and whatnot!
+
+		// CWeaponSOBase::GetAccuracyModifier() handles both player-specific and weapon-specific conditions, so factor that into our calculation now too
+		return pWeapon->GetBulletSpread() * weaponAccuracy * pWeapon->GetAccuracyModifier();
+	}
 	
 	return VECTOR_CONE_15DEGREES;
 }

@@ -1824,6 +1824,9 @@
     <ClCompile Include="..\shared\so2\weapon_m4s90.cpp">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_sobase_sniper.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h">
@@ -3567,6 +3570,9 @@
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\so2\weapon_dualberetta92s.h">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\so2\weapon_sobase_sniper.h">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
   </ItemGroup>

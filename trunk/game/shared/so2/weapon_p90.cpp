@@ -38,6 +38,10 @@ public:
 	// Add support for CS:S player animations
 	const char *GetWeaponSuffix( void ) { return "P90"; }
 
+	// Weapon scope system
+	// TODO: Make a red dot scope specifically for the P90...maybe...=P
+	//virtual bool HasScope( void ) { return true; }	// this weapon has a scope
+
 private:
 	CWeaponP90( const CWeaponP90 & );
 };

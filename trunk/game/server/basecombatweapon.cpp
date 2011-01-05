@@ -76,7 +76,17 @@ void W_Precache(void)
 	g_sModelIndexBubbles = CBaseEntity::PrecacheModel ("sprites/bubble.vmt");//bubbles
 	g_sModelIndexLaser = CBaseEntity::PrecacheModel( (char *)g_pModelNameLaser );
 
-	PrecacheParticleSystem( "blood_impact_red_01" );
+/////
+
+	// SO2 - James
+	// Custom blood particle (intended for zombies, but really should replace any red blood in the game)
+
+	//PrecacheParticleSystem( "blood_impact_red_01" );
+
+	PrecacheParticleSystem( "blood_impact_zombie_so" );
+
+/////
+
 	PrecacheParticleSystem( "blood_impact_green_01" );
 	PrecacheParticleSystem( "blood_impact_yellow_01" );
 

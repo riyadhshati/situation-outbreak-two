@@ -1635,6 +1635,15 @@
     <ClCompile Include="..\shared\so2\weapon_m4s90.cpp">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="so2\so_fx_shelleject.cpp">
+      <Filter>Source Files\SO2</Filter>
+    </ClCompile>
+    <ClCompile Include="so2\hud_scope.cpp">
+      <Filter>Source Files\SO2\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_sobase_sniper.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="achievement_notification_panel.h">
@@ -3456,6 +3465,9 @@
       <Filter>Source Files\SO2</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\so2\weapon_dualberetta92s.h">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\so2\weapon_sobase_sniper.h">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
   </ItemGroup>

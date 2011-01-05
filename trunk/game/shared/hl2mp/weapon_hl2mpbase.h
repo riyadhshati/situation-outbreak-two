@@ -79,12 +79,36 @@ public:
 	Vector	GetOriginalSpawnOrigin( void ) { return m_vOriginalSpawnOrigin;	}
 	QAngle	GetOriginalSpawnAngles( void ) { return m_vOriginalSpawnAngles;	}
 
+protected:
+
+/////
+
+	// SO2 - James
+	// Weapon respawn fix
+	// http://developer.valvesoftware.com/wiki/Weapon_Respawn_Fix
+	// Moved from private to protected for access
+
+	Vector m_vOriginalSpawnOrigin;
+	QAngle m_vOriginalSpawnAngles;
+
+/////
+
 private:
 
 	CWeaponHL2MPBase( const CWeaponHL2MPBase & );
 
-	Vector m_vOriginalSpawnOrigin;
-	QAngle m_vOriginalSpawnAngles;
+/////
+
+	// SO2 - James
+	// Weapon respawn fix
+	// http://developer.valvesoftware.com/wiki/Weapon_Respawn_Fix
+	// Moved from private to protected for access
+
+	//Vector m_vOriginalSpawnOrigin;
+	//QAngle m_vOriginalSpawnAngles;
+
+/////
+
 };
 
 

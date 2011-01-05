@@ -246,6 +246,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "c:\program file
     <ClCompile Include="..\shared\so2\weapon_sobase.cpp" />
     <ClCompile Include="..\shared\so2\weapon_sobasehlmpcombatweapon.cpp" />
     <ClCompile Include="..\shared\so2\weapon_sobase_machinegun.cpp" />
+    <ClCompile Include="..\shared\so2\weapon_sobase_sniper.cpp" />
     <ClCompile Include="..\shared\so2\weapon_tmp.cpp" />
     <ClCompile Include="..\shared\so2\weapon_ump45.cpp" />
     <ClCompile Include="..\shared\so2\weapon_usp.cpp" />
@@ -647,8 +648,10 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "c:\program file
     <ClCompile Include="so2\clientmode_sonormal.cpp" />
     <ClCompile Include="so2\c_npc_creeper.cpp" />
     <ClCompile Include="so2\c_so_player.cpp" />
+    <ClCompile Include="so2\hud_scope.cpp" />
     <ClCompile Include="so2\hud_so_damageindicator.cpp" />
     <ClCompile Include="so2\hud_so_stamina.cpp" />
+    <ClCompile Include="so2\so_fx_shelleject.cpp" />
     <ClCompile Include="so2\so_hud_chat.cpp" />
     <ClCompile Include="splinepatch.cpp" />
     <ClCompile Include="..\shared\Sprite.cpp" />
@@ -902,6 +905,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "c:\program file
     <ClInclude Include="..\shared\so2\weapon_sobase.h" />
     <ClInclude Include="..\shared\so2\weapon_sobasehlmpcombatweapon.h" />
     <ClInclude Include="..\shared\so2\weapon_sobase_machinegun.h" />
+    <ClInclude Include="..\shared\so2\weapon_sobase_sniper.h" />
     <ClInclude Include="achievement_notification_panel.h" />
     <ClInclude Include="..\shared\achievement_saverestore.h" />
     <ClInclude Include="..\shared\achievementmgr.h" />

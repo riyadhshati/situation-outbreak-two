@@ -57,6 +57,9 @@ const Vector &CSOMachineGun::GetBulletSpread( void )
 //-----------------------------------------------------------------------------
 void CSOMachineGun::PrimaryAttack( void )
 {
+	// Weapon scope system
+	int preShotAmmo = m_iClip1;
+
 	// Only the player fires this way so we can cast
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 	if (!pPlayer)
@@ -101,7 +104,20 @@ void CSOMachineGun::PrimaryAttack( void )
 	info.m_vecSpread = pSOPlayer->GetAttackSpread( this );
 	info.m_flDistance = MAX_TRACE_LENGTH;
 	info.m_iAmmoType = m_iPrimaryAmmoType;
-	info.m_iTracerFreq = 2;
+
+	// Weapon scope system
+	// Other players should see someone's tracers regardless of whether or not that individual's weapon is scoped, so let's try to do that here...
+	// ^^^ Doesn't work, probably due to lag compensation or something like that...oh well... ^^^
+//#ifdef CLIENT_DLL
+	// Don't show tracers for weapons that are scoped, which aren't visible (that'd be dumb as the tracers would seemingly come from nowhere)
+	if ( m_bIsScoped )
+		info.m_iTracerFreq = 0;
+	else
+		info.m_iTracerFreq = 2;	// 50% (?)
+/*#else
+	info.m_iTracerFreq = 2;	// 50% (?)
+#endif*/
+
 	FireBullets( info );
 
 	//Factor in the view kick
@@ -116,6 +132,10 @@ void CSOMachineGun::PrimaryAttack( void )
 	SendWeaponAnim( GetPrimaryAttackActivity() );
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 	ToSOPlayer(pPlayer)->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+
+	// Weapon scope system
+	if ( HasScope() && UnscopeAfterShot() && (preShotAmmo > 0) )
+		ExitScope();	// done after actually shooting because it is logical and should prevent any unnecessary accuracy changes
 }
 
 //-----------------------------------------------------------------------------
