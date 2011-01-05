@@ -72,8 +72,8 @@ WeaponData
 
 	Reorigin
 	{
-		"forward"	"-2"
-		"right"		"2.5"
+		"forward"	"-3"
+		"right"		"3"
 		"up"		"1.75"
 		"pitch"		"0"
 		"yaw"		"0"
