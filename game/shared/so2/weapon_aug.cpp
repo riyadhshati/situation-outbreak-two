@@ -38,6 +38,9 @@ public:
 	// Add support for CS:S player animations
 	const char *GetWeaponSuffix( void ) { return "AUG"; }
 
+	// Weapon scope system
+	virtual bool HasScope( void ) { return true; }	// this weapon has a scope
+
 private:
 	CWeaponAUG( const CWeaponAUG & );
 };

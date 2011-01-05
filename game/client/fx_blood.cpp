@@ -474,7 +474,18 @@ struct ParticleForBlood_t
 
 ParticleForBlood_t	bloodCallbacks[] =
 {
-	{ BLOOD_COLOR_RED,		"blood_impact_red_01" },
+
+/////
+
+	// SO2 - James
+	// Custom blood particle (intended for zombies, but really should replace any red blood in the game)
+
+	//{ BLOOD_COLOR_RED,		"blood_impact_red_01" },
+
+	{ BLOOD_COLOR_RED,		"blood_impact_zombie_so" },
+
+/////
+
 	{ BLOOD_COLOR_GREEN,	"blood_impact_green_01" },
 	{ BLOOD_COLOR_YELLOW,	"blood_impact_yellow_01" },
 #if defined( HL2_EPISODIC )

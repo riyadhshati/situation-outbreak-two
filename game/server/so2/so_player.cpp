@@ -381,7 +381,14 @@ void CC_Player_Drop( void )
 
 	// Only drop weapons we're allowed to drop
 	if ( pWeapon->CanDrop() )
+	{
+		// Weapon scope system
+		// Unscope when dropping a weapon with a scope (prevents bugs)
+		if ( pWeapon->HasScope() )
+			pWeapon->ExitScope();
+
 		pPlayer->Weapon_Drop( pWeapon, NULL, NULL );
+	}
 }
 static ConCommand drop( "drop", CC_Player_Drop, "If possible, drops one's equipped weapon" );
 
