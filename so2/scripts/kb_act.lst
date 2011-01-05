@@ -13,7 +13,7 @@
 "blank"			"#Valve_Combat_Title"
 "blank"			"=========================="
 "+attack"				"#Valve_Primary_Attack"
-"+attack2"				"#Valve_Secondary_Attack"
+"+attack2"				"Secondary Attack/Toggle Scope"
 "+reload"				"#Valve_Reload_Weapon"
 "+use"					"#Valve_Use_Items"
 "drop"					"Drop Current Weapon"
