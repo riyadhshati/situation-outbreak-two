@@ -187,10 +187,11 @@ void CSO_Player::GiveDefaultItems( void )
 	CBasePlayer::GiveAmmo( 9999, "shotgun" );
 	CBasePlayer::GiveAmmo( 9999, "machinegun" );
 	CBasePlayer::GiveAmmo( 9999, "grenade" );
+	CBasePlayer::GiveAmmo( 9999, "sniper" );
 
-	// Equip and switch to our default weapon, the USP, automatically
-	GiveNamedItem( "weapon_usp" );
-	Weapon_Switch( Weapon_OwnsThisType( "weapon_usp" ) );
+	// Equip and switch to our default weapon, the knife, automatically
+	GiveNamedItem( "weapon_knife" );
+	Weapon_Switch( Weapon_OwnsThisType( "weapon_knife" ) );
 }
 
 bool CSO_Player::ValidatePlayerModel( const char *pModel )
@@ -284,6 +285,66 @@ void CSO_Player::PostThink( void )
 
 		m_flSpeedCheckDelay = gpGlobals->curtime + 0.5f;	// this should be often enough without overloading servers...hopefully...
 	}
+}
+
+// Taken and modified from CHL2MP_Player::BumpWeapon
+extern int	gEvilImpulse101;
+bool CSO_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
+{
+	if ( !pWeapon )	// you never know...
+		return false;
+
+	CBaseCombatCharacter *pOwner = pWeapon->GetOwner();
+
+	// Can I have this weapon type?
+	if ( !IsAllowedToPickupWeapons() )
+		return false;
+
+	if ( pOwner || !Weapon_CanUse( pWeapon ) || !g_pGameRules->CanHavePlayerItem(this, pWeapon) )
+	{
+		if ( gEvilImpulse101 )
+			UTIL_Remove( pWeapon );
+
+		return false;
+	}
+
+	// Don't let the player fetch weapons through walls (use MASK_SOLID so that you can't pickup through windows)
+	if( !pWeapon->FVisible(this, MASK_SOLID) && !(GetFlags() & FL_NOTARGET) )
+		return false;
+
+	bool bOwnsWeaponAlready = !!Weapon_OwnsThisType( pWeapon->GetClassname(), pWeapon->GetSubType() );
+	if ( bOwnsWeaponAlready == true ) 
+	{
+		//If we have room for the ammo, then "take" the weapon too.
+		if ( Weapon_EquipAmmoOnly(pWeapon) )
+		{
+			pWeapon->CheckRespawn();
+
+			UTIL_Remove( pWeapon );
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Only allow players to carry one weapon per bucket
+	for ( int i = 0; i < WeaponCount(); i++ )
+    {
+    	CBaseCombatWeapon *pSearch = GetWeapon( i );
+    	if ( pSearch && (pSearch->GetSlot() == pWeapon->GetSlot()) )
+    		return false;
+    }
+
+	pWeapon->CheckRespawn();
+	Weapon_Equip( pWeapon );
+
+	// Switch to the weapon we just picked up, regardless of its power or worth
+	// Why? Chances are we did so willingly, and if we were actually able to pickup a weapon, we must have not had a weapon of its type or at least not full ammo for it
+	Weapon_Switch( pWeapon );
+
+	return true;
 }
 
 // Much of this function should resemble CHL2MP_Player::ClientCommand

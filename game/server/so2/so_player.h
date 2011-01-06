@@ -74,6 +74,8 @@ public:
 
 	float GetModelChangeDelay( void ) { return m_flModelChangeDelay; }
 
+	bool BumpWeapon( CBaseCombatWeapon *pWeapon );
+
 	// See so_player_shared.cpp (these are shared functions)
 	bool Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon );
 	Vector GetAttackSpread( CWeaponSOBase *pWeapon, CBaseEntity *pTarget = NULL );

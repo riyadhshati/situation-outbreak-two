@@ -247,6 +247,10 @@ bool CWeaponSOBase::CanScope( void )
 	if ( !HasScope() )
 		return false;
 
+	// If this weapon requires the player to unscope after firing, wait until we're allowed to fire again before the scope can be used again
+	if ( UnscopeAfterShot() && (gpGlobals->curtime < m_flNextPrimaryAttack) )
+		return false;
+
 	CSO_Player *pOwner = ToSOPlayer( GetOwner() );
 	if ( !pOwner )
 		return false;

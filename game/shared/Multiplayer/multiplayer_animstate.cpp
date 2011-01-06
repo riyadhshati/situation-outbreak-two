@@ -747,10 +747,11 @@ bool CMultiPlayerAnimState::HandleSwimming( Activity &idealActivity )
 		// SO2 - James
 		// Fix missing player animations
 		// http://developer.valvesoftware.com/wiki/Fix_Missing_Player_Animations
+		// Add support for CS:S player animations
 
 		//idealActivity = ACT_MP_SWIM;
 
-		idealActivity = ACT_MP_RUN;
+		idealActivity = ACT_RUN;
 
 /////
 

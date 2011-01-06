@@ -1827,6 +1827,18 @@
     <ClCompile Include="..\shared\so2\weapon_sobase_sniper.cpp">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_scout.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_awm.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_knife.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\so2\weapon_sobasebasebludgeon.cpp">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h">
@@ -3573,6 +3585,9 @@
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\so2\weapon_sobase_sniper.h">
+      <Filter>Source Files\SO2\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\so2\weapon_sobasebasebludgeon.h">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClInclude>
   </ItemGroup>
