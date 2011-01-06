@@ -1548,7 +1548,10 @@ Scheme
 		"1"		"resource/HALFLIFE2.ttf"
 		"1"		"resource/HL2MP.ttf"
 		"2"		"resource/HL2crosshairs.ttf"
-		"3"		"resource/csd.ttf"
+		"4"		"resource/cs.ttf"
+		"5"		"resource/csd.ttf"
+		"6"		"resource/Cstrike.ttf"
+		"7"		"resource/CSlogo.ttf"
 	}
 
 }

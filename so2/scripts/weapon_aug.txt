@@ -7,7 +7,7 @@ WeaponData
 	"viewmodel"			"models/weapons/v_rif_aug.mdl"
 	"playermodel"			"models/weapons/w_rif_aug.mdl"
 	"anim_prefix"			"ar2"
-	"bucket"			"1"
+	"bucket"			"2"
 	"bucket_position"		"0"
 
 	"clip_size"			"30"
@@ -37,23 +37,18 @@ WeaponData
 	{
 		"weapon"
 		{
-				"font"		"WeaponIcons"
-				"character"	"l"
+				"font"		"CSweaponsSmall"
+				"character"	"E"
 		}
 		"weapon_s"
 		{	
-				"font"		"WeaponIconsSelected"
-				"character"	"l"
+				"font"		"CSweapons"
+				"character"	"E"
 		}
 		"ammo"
 		{
-				"font"		"WeaponIcons"
-				"character"	"u"
-		}
-		"ammo2"
-		{
-				"font"		"WeaponIcons"
-				"character"	"z"
+				"font"		"CSTypeDeath"
+				"character"		"N"
 		}
 		"crosshair"
 		{

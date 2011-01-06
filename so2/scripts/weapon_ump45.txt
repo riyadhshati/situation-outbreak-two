@@ -7,7 +7,7 @@ WeaponData
 	"viewmodel"			"models/weapons/v_smg_ump45.mdl"
 	"playermodel"			"models/weapons/w_smg_ump45.mdl"
 	"anim_prefix"			"smg2"
-	"bucket"				"1"
+	"bucket"				"2"
 	"bucket_position"		"0"
 
 	"clip_size"				"25"
@@ -37,23 +37,18 @@ WeaponData
 	{
 		"weapon"
 		{
-				"font"		"WeaponIcons"
-				"character"	"a"
+				"font"		"CSweaponsSmall"
+				"character"	"Q"
 		}
 		"weapon_s"
 		{	
-				"font"		"WeaponIconsSelected"
-				"character"	"a"
+				"font"		"CSweapons"
+				"character"	"Q"
 		}
 		"ammo"
 		{
-				"font"		"WeaponIcons"
-				"character"	"r"
-		}
-		"ammo2"
-		{
-				"font"		"WeaponIcons"
-				"character"	"t"
+				"font"		"CSTypeDeath"
+				"character"		"M"
 		}
 		"crosshair"
 		{

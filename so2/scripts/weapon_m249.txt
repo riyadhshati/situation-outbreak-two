@@ -7,7 +7,7 @@ WeaponData
 	"viewmodel"			"models/weapons/v_mach_m249para.mdl"
 	"playermodel"			"models/weapons/w_mach_m249para.mdl"
 	"anim_prefix"			"smg2"
-	"bucket"				"1"
+	"bucket"				"2"
 	"bucket_position"		"0"
 
 	"clip_size"				"100"
@@ -37,23 +37,18 @@ WeaponData
 	{
 		"weapon"
 		{
-				"font"		"WeaponIcons"
-				"character"	"a"
+				"font"		"CSweaponsSmall"
+				"character"	"Z"
 		}
 		"weapon_s"
 		{	
-				"font"		"WeaponIconsSelected"
-				"character"	"a"
+				"font"		"CSweapons"
+				"character"	"Z"
 		}
 		"ammo"
 		{
-				"font"		"WeaponIcons"
-				"character"	"r"
-		}
-		"ammo2"
-		{
-				"font"		"WeaponIcons"
-				"character"	"t"
+				"font"		"CSTypeDeath"
+				"character"		"N"
 		}
 		"crosshair"
 		{

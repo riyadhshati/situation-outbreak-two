@@ -1,0 +1,78 @@
+// Scout
+
+WeaponData
+{
+	// Weapon data is loaded by both the Game and Client DLLs.
+	"printname"	"Scout"
+	"viewmodel"			"models/weapons/v_snip_scout.mdl"
+	"playermodel"			"models/weapons/w_snip_scout.mdl"
+	"anim_prefix"			"bow"
+	"bucket"				"2"
+	"bucket_position"		"0"
+
+	"clip_size"				"10"
+	"clip2_size"			"-1"
+
+	"default_clip"			"10"
+	"default_clip2"			"-1"
+
+	"primary_ammo"			"sniper"
+	"secondary_ammo"		"None"
+
+	"weight"				"3"
+	"item_flags"			"0"
+	"damage"			"216"
+
+	"BuiltRightHanded"		"0"
+	"AllowFlipping"			"1"
+
+	// Sounds for the weapon. There is a max of 16 sounds per category (i.e. max 16 "single_shot" sounds)
+	SoundData
+	{
+		"single_shot"		"Weapon_Scout.Single"
+	}
+
+	// Weapon Sprite data is loaded by the Client DLL.
+	TextureData
+	{
+		"weapon"
+		{
+				"font"		"CSweaponsSmall"
+				"character"	"N"
+		}
+		"weapon_s"
+		{	
+				"font"		"CSweapons"
+				"character"	"N"
+		}
+		"ammo"
+		{
+				"font"		"CSTypeDeath"
+				"character"		"V"
+		}
+		"crosshair"
+		{
+				"font"		"Crosshairs"
+				"character"	"Q"
+		}
+		"autoaim"
+		{
+				"file"		"sprites/crosshairs"
+				"x"			"0"
+				"y"			"48"
+				"width"		"24"
+				"height"	"24"
+		}
+	}
+
+	Reorigin
+	{
+		"forward"	"-2"
+		"right"		"3"
+		"up"		"2"
+		"pitch"		"0"
+		"yaw"		"0"
+		"roll"		"0"
+		"fov"		"0"
+	}
+}

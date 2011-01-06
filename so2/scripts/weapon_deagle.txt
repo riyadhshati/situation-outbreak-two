@@ -7,7 +7,7 @@ WeaponData
 	"viewmodel"			"models/weapons/v_pist_deagle.mdl"
 	"playermodel"		"models/weapons/w_pist_deagle.mdl"
 	"anim_prefix"		"python"
-	"bucket"			"0"
+	"bucket"			"1"
 	"bucket_position"	"0"
 
 	"clip_size"			"7"
@@ -34,18 +34,18 @@ WeaponData
 	{
 		"weapon"
 		{
-				"font"		"WeaponIcons"
-				"character"	"e"
+				"font"		"CSweaponsSmall"
+				"character"	"F"
 		}
 		"weapon_s"
 		{	
-				"font"		"WeaponIconsSelected"
-				"character"	"e"
+				"font"		"CSweapons"
+				"character"	"F"
 		}
 		"ammo"
 		{
-				"font"		"WeaponIcons"
-				"character"	"q"
+				"font"		"CSTypeDeath"
+				"character"		"U"
 		}
 		"crosshair"
 		{

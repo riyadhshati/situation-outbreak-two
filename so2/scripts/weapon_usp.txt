@@ -7,7 +7,7 @@ WeaponData
 	"viewmodel"			"models/weapons/v_pist_usp.mdl"
 	"playermodel"		"models/weapons/w_pist_usp.mdl"
 	"anim_prefix"		"pistol"
-	"bucket"			"0"
+	"bucket"			"1"
 	"bucket_position"	"0"
 
 	"clip_size"			"12"
@@ -33,18 +33,18 @@ WeaponData
 	{
 		"weapon"
 		{
-				"font"		"WeaponIcons"
-				"character"	"d"
+				"font"		"CSweaponsSmall"
+				"character"	"A"
 		}
 		"weapon_s"
 		{	
-				"font"		"WeaponIconsSelected"
-				"character"	"d"
+				"font"		"CSweapons"
+				"character"	"A"
 		}
 		"ammo"
 		{
-				"font"		"WeaponIcons"
-				"character"	"p"
+				"font"		"CSTypeDeath"
+				"character"		"M"
 		}
 		"crosshair"
 		{

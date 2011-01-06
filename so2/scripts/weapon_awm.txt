@@ -1,0 +1,78 @@
+// AWM
+
+WeaponData
+{
+	// Weapon data is loaded by both the Game and Client DLLs.
+	"printname"	"AWM"
+	"viewmodel"			"models/weapons/v_snip_awp.mdl"
+	"playermodel"			"models/weapons/w_snip_awp.mdl"
+	"anim_prefix"			"bow"
+	"bucket"				"2"
+	"bucket_position"		"0"
+
+	"clip_size"				"5"
+	"clip2_size"			"-1"
+
+	"default_clip"			"5"
+	"default_clip2"			"-1"
+
+	"primary_ammo"			"sniper"
+	"secondary_ammo"		"None"
+
+	"weight"				"3"
+	"item_flags"			"0"
+	"damage"			"324"
+
+	"BuiltRightHanded"		"0"
+	"AllowFlipping"			"1"
+
+	// Sounds for the weapon. There is a max of 16 sounds per category (i.e. max 16 "single_shot" sounds)
+	SoundData
+	{
+		"single_shot"		"Weapon_AWP.Single"
+	}
+
+	// Weapon Sprite data is loaded by the Client DLL.
+	TextureData
+	{
+		"weapon"
+		{
+				"font"		"CSweaponsSmall"
+				"character"	"R"
+		}
+		"weapon_s"
+		{	
+				"font"		"CSweapons"
+				"character"	"R"
+		}
+		"ammo"
+		{
+				"font"		"CSTypeDeath"
+				"character"		"W"
+		}
+		"crosshair"
+		{
+				"font"		"Crosshairs"
+				"character"	"Q"
+		}
+		"autoaim"
+		{
+				"file"		"sprites/crosshairs"
+				"x"			"0"
+				"y"			"48"
+				"width"		"24"
+				"height"	"24"
+		}
+	}
+
+	Reorigin
+	{
+		"forward"	"-2"
+		"right"		"3"
+		"up"		"2"
+		"pitch"		"0"
+		"yaw"		"0"
+		"roll"		"0"
+		"fov"		"0"
+	}
+}

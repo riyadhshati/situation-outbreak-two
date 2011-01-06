@@ -7,7 +7,7 @@ WeaponData
 	"viewmodel"				"models/weapons/v_shot_m3super90.mdl"
 	"playermodel"			"models/weapons/w_shot_m3super90.mdl"
 	"anim_prefix"			"shotgun"
-	"bucket"				"1"
+	"bucket"				"2"
 	"bucket_position"		"0"
 
 	"clip_size"				"8"
@@ -33,18 +33,18 @@ WeaponData
 	{
 		"weapon"
 		{
-				"font"		"WeaponIcons"
-				"character"	"b"
+				"font"		"CSweaponsSmall"
+				"character"	"K"
 		}
 		"weapon_s"
 		{	
-				"font"		"WeaponIconsSelected"
-				"character"	"b"
+				"font"		"CSweapons"
+				"character"	"K"
 		}
 		"ammo"
 		{
-				"font"		"WeaponIcons"
-				"character"	"s"
+				"font"		"CSTypeDeath"
+				"character"		"J"
 		}
 		"crosshair"
 		{

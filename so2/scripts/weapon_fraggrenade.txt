@@ -7,7 +7,7 @@ WeaponData
 	"viewmodel"				"models/weapons/v_eq_fraggrenade.mdl"
 	"playermodel"			"models/weapons/w_eq_fraggrenade.mdl"
 	"anim_prefix"			"Grenade"
-	"bucket"				"2"
+	"bucket"				"3"
 	"bucket_position"		"0"
 
 	"clip_size"				"-1"
@@ -38,18 +38,18 @@ WeaponData
 	{
 		"weapon"
 		{
-				"font"		"WeaponIcons"
-				"character"	"k"
+				"font"		"CSweaponsSmall"
+				"character"	"H"
 		}
 		"weapon_s"
 		{	
-				"font"		"WeaponIconsSelected"
-				"character"	"k"
+				"font"		"CSweapons"
+				"character"	"H"
 		}
 		"ammo"
 		{
-				"font"		"WeaponIcons"
-				"character"	"v"
+				"font"		"CSTypeDeath"
+				"character"		"O"
 		}
 		"crosshair"
 		{
