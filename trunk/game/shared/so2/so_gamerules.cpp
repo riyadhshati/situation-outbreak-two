@@ -751,6 +751,7 @@ CAmmoDef *GetAmmoDef()
 		def.AddAmmoType("shotgun",			DMG_BULLET | DMG_BUCKSHOT,	TRACER_LINE,			0,			0,			40,			BULLET_IMPULSE(400, 1200),	0 );
 		def.AddAmmoType("machinegun",		DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			200,		BULLET_IMPULSE(200, 1225),	0 );
 		def.AddAmmoType("grenade",			DMG_BLAST,					TRACER_NONE,			0,			0,			3,			0,							0 );
+		def.AddAmmoType("sniper",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			30,			BULLET_IMPULSE(200, 1225),	0 );
 	}
 
 	return &def;

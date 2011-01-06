@@ -227,6 +227,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "c:\program file
     <ClCompile Include="..\shared\so2\so_player_shared.cpp" />
     <ClCompile Include="..\shared\so2\weapon_ak47.cpp" />
     <ClCompile Include="..\shared\so2\weapon_aug.cpp" />
+    <ClCompile Include="..\shared\so2\weapon_awm.cpp" />
     <ClCompile Include="..\shared\so2\weapon_deagle.cpp" />
     <ClCompile Include="..\shared\so2\weapon_dualberetta92s.cpp" />
     <ClCompile Include="..\shared\so2\weapon_famas.cpp" />
@@ -234,6 +235,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "c:\program file
     <ClCompile Include="..\shared\so2\weapon_fraggrenade.cpp" />
     <ClCompile Include="..\shared\so2\weapon_galil.cpp" />
     <ClCompile Include="..\shared\so2\weapon_glock18.cpp" />
+    <ClCompile Include="..\shared\so2\weapon_knife.cpp" />
     <ClCompile Include="..\shared\so2\weapon_m249.cpp" />
     <ClCompile Include="..\shared\so2\weapon_m3s90.cpp" />
     <ClCompile Include="..\shared\so2\weapon_m4a1.cpp" />
@@ -242,8 +244,10 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "c:\program file
     <ClCompile Include="..\shared\so2\weapon_mp5n.cpp" />
     <ClCompile Include="..\shared\so2\weapon_p228.cpp" />
     <ClCompile Include="..\shared\so2\weapon_p90.cpp" />
+    <ClCompile Include="..\shared\so2\weapon_scout.cpp" />
     <ClCompile Include="..\shared\so2\weapon_sg552.cpp" />
     <ClCompile Include="..\shared\so2\weapon_sobase.cpp" />
+    <ClCompile Include="..\shared\so2\weapon_sobasebasebludgeon.cpp" />
     <ClCompile Include="..\shared\so2\weapon_sobasehlmpcombatweapon.cpp" />
     <ClCompile Include="..\shared\so2\weapon_sobase_machinegun.cpp" />
     <ClCompile Include="..\shared\so2\weapon_sobase_sniper.cpp" />
@@ -959,6 +963,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "c:\program file
     <ClInclude Include="..\shared\so2\weapon_dualberetta92s.h" />
     <ClInclude Include="..\shared\so2\weapon_fraggrenade.h" />
     <ClInclude Include="..\shared\so2\weapon_sobase.h" />
+    <ClInclude Include="..\shared\so2\weapon_sobasebasebludgeon.h" />
     <ClInclude Include="..\shared\so2\weapon_sobasehlmpcombatweapon.h" />
     <ClInclude Include="..\shared\so2\weapon_sobase_machinegun.h" />
     <ClInclude Include="..\shared\so2\weapon_sobase_sniper.h" />

@@ -46,6 +46,9 @@ public:
 
 	virtual Activity CalcMainActivity();
 
+	void ComputeMainSequence();
+	bool HandleDucking( Activity &idealActivity );
+	bool HandleMoving( Activity &idealActivity );
 	bool HandleJumping( Activity &idealActivity );
 
 	bool IsThrowingGrenade();

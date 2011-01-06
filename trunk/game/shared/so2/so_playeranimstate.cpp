@@ -361,7 +361,7 @@ void CSOPlayerAnimState::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 		m_bFirstJumpFrame = true;
 		m_flJumpStartTime = gpGlobals->curtime;
 
-		RestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_JUMP );
+		RestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HOP );
 	}
 	else if ( (event == PLAYERANIMEVENT_RELOAD) || (event == PLAYERANIMEVENT_RELOAD_LOOP) || (event == PLAYERANIMEVENT_RELOAD_END) )
 	{	// PLAYERANIMEVENT_RELOAD_LOOP and PLAYERANIMEVENT_RELOAD_END are used exclusively by shotguns at the moment...I think
@@ -476,7 +476,7 @@ extern ConVar anim_showmainactivity;
 
 Activity CSOPlayerAnimState::CalcMainActivity()
 {
-	Activity idealActivity = ACT_MP_STAND_IDLE;
+	Activity idealActivity = ACT_IDLE;
 
 	if ( HandleJumping( idealActivity ) ||
 		 HandleDucking( idealActivity ) ||
@@ -897,6 +897,96 @@ void CSOPlayerAnimState::OptimizeLayerWeights( int iFirstLayer, int nLayers )
 #endif
 		}
 	}
+}
+
+void CSOPlayerAnimState::ComputeMainSequence()
+{
+	VPROF( "CBasePlayerAnimState::ComputeMainSequence" );
+
+	CBaseAnimatingOverlay *pPlayer = GetBasePlayer();
+
+	// Have our class or the mod-specific class determine what the current activity is.
+	Activity idealActivity = CalcMainActivity();
+
+#ifdef CLIENT_DLL
+	Activity oldActivity = m_eCurrentMainSequenceActivity;
+#endif
+	
+	// Store our current activity so the aim and fire layers know what to do.
+	m_eCurrentMainSequenceActivity = idealActivity;
+
+	// Hook to force playback of a specific requested full-body sequence
+	if ( m_nSpecificMainSequence >= 0 )
+	{
+		if ( pPlayer->GetSequence() != m_nSpecificMainSequence )
+		{
+			pPlayer->ResetSequence( m_nSpecificMainSequence );
+			ResetGroundSpeed();
+			return;
+		}
+		 
+		if ( !pPlayer->IsSequenceFinished() )
+			return;
+
+		m_nSpecificMainSequence = -1;
+		RestartMainSequence();
+		ResetGroundSpeed();
+	}
+
+	// Export to our outer class..
+	int animDesired = SelectWeightedSequence( TranslateActivity( idealActivity ) );
+	if ( pPlayer->GetSequenceActivity( pPlayer->GetSequence() ) == pPlayer->GetSequenceActivity( animDesired ) )
+		return;
+
+	if ( animDesired < 0 )
+	{
+		 animDesired = 0;
+	}
+
+	pPlayer->ResetSequence( animDesired );
+
+#ifdef CLIENT_DLL
+	// If we went from idle to walk, reset the interpolation history.
+	// Kind of hacky putting this here.. it might belong outside the base class.
+	if ( (oldActivity == ACT_CROUCHIDLE || oldActivity == ACT_IDLE || oldActivity == ACT_MP_DEPLOYED_IDLE || oldActivity == ACT_MP_CROUCH_DEPLOYED_IDLE ) && 
+		 (idealActivity == ACT_WALK || idealActivity == ACT_RUN_CROUCH ) )
+	{
+		ResetGroundSpeed();
+	}
+#endif
+}
+
+bool CSOPlayerAnimState::HandleDucking( Activity &idealActivity )
+{
+	if ( GetBasePlayer()->GetFlags() & FL_DUCKING )
+	{
+		if ( GetOuterXYSpeed() > MOVING_MINIMUM_SPEED )
+		{
+			idealActivity = ACT_RUN_CROUCH;
+		}
+		else
+		{
+			idealActivity = ACT_CROUCHIDLE;
+		}
+		
+		return true;
+	}
+	
+	return false;
+}
+
+bool CSOPlayerAnimState::HandleMoving( Activity &idealActivity )
+{
+	// In TF we run all the time now.
+	float flSpeed = GetOuterXYSpeed();
+
+	if ( flSpeed > MOVING_MINIMUM_SPEED )
+	{
+		// Always assume a run.
+		idealActivity = ACT_RUN;
+	}
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------

@@ -1013,35 +1013,38 @@ int CNPC_Creeper::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 {
 	CTakeDamageInfo info = inputInfo;
 
-	if ( m_bHeadShot )
+	if ( info.GetDamageType() & (DMG_BULLET | DMG_BUCKSHOT) )	// creepers handle bullets and buckshot differently depending on where they're hit
 	{
-		info.ScaleDamage( 2.0f );	// headshots hurt us a lot!
-
-		// Blood loss system
-		int shouldHeadExplode = random->RandomInt( 1, 10 );	// there's a 10% chance of our head bleeding when we get shot in the head
-		if ( shouldHeadExplode == 1 )	// sorry zombie, but here it comes!
+		if ( m_bHeadShot )
 		{
-			EmitSound( "NPC_Creeper.HeadSquirt" ); // the sound...
+			info.ScaleDamage( 2.0f );	// headshots hurt us a lot!
 
-			DispatchParticleEffect( "blood_advisor_puncture_withdraw", PATTACH_POINT_FOLLOW, this, "eyes" );	// the blood...
-
-			AddFlag( FL_ONFIRE );	// this could have some nasty side-effects, but oh well!
-			RemoveSpawnFlags( SF_NPC_GAG );
-			MoanSound( envZombieMoanIgnited_creeper, ARRAYSIZE( envZombieMoanIgnited_creeper ) );
-			if ( m_pMoanSound )	// begin moaning like we're on fire since bleeding hurts :(
+			// Blood loss system
+			int shouldHeadExplode = random->RandomInt( 1, 10 );	// there's a 10% chance of our head bleeding when we get shot in the head
+			if ( shouldHeadExplode == 1 )	// sorry zombie, but here it comes!
 			{
-				ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, 120, 1.0 );
-				ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 1, 1.0 );
-			}
+				EmitSound( "NPC_Creeper.HeadSquirt" ); // the sound...
 
-			m_bLosingBlood = true;
-			m_hBleedAttacker = info.GetAttacker();
-			m_flBleedTime = gpGlobals->curtime + 2.0f;	// we're bleeding from our head, which means we should die pretty soon
+				DispatchParticleEffect( "blood_advisor_puncture_withdraw", PATTACH_POINT_FOLLOW, this, "eyes" );	// the blood...
+
+				AddFlag( FL_ONFIRE );	// this could have some nasty side-effects, but oh well!
+				RemoveSpawnFlags( SF_NPC_GAG );
+				MoanSound( envZombieMoanIgnited_creeper, ARRAYSIZE( envZombieMoanIgnited_creeper ) );
+				if ( m_pMoanSound )	// begin moaning like we're on fire since bleeding hurts :(
+				{
+					ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, 120, 1.0 );
+					ENVELOPE_CONTROLLER.SoundChangeVolume( m_pMoanSound, 1, 1.0 );
+				}
+
+				m_bLosingBlood = true;
+				m_hBleedAttacker = info.GetAttacker();
+				m_flBleedTime = gpGlobals->curtime + 2.0f;	// we're bleeding from our head, which means we should die pretty soon
+			}
 		}
-	}
-	else
-	{
-		info.ScaleDamage( 0.5f );	// other things do not hurt as much (we can survive with damaged limbs and whatnot)
+		else
+		{
+			info.ScaleDamage( 0.5f );	// other things do not hurt as much (we can survive with damaged limbs and whatnot)
+		}
 	}
 
 	// Throw some blood on the ground when we take damage (adds some realism)
