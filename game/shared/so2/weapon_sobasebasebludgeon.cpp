@@ -136,7 +136,7 @@ void CBaseSOBludgeonWeapon::SecondaryAttack()
 //------------------------------------------------------------------------------
 void CBaseSOBludgeonWeapon::Hit( trace_t &traceHit, Activity nHitActivity )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CSO_Player *pPlayer = ToSOPlayer( GetOwner() );
 	
 	//Do view kick
 //	AddViewKick();
@@ -297,7 +297,7 @@ void CBaseSOBludgeonWeapon::Swing( int bIsSecondary )
 	trace_t traceHit;
 
 	// Try a ray
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	CSO_Player *pOwner = ToSOPlayer( GetOwner() );
 	if ( !pOwner )
 		return;
 

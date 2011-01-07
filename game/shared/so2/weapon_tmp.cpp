@@ -38,6 +38,11 @@ public:
 	// Add support for CS:S player animations
 	const char *GetWeaponSuffix( void ) { return "TMP"; }
 
+	// Fix CS:S muzzleflashes
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+	// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+	bool ShouldDrawMuzzleFlash( void ) { return false; }	// this is supposed to be a silenced weapon, so that means no muzzleflash
+
 private:
 	CWeaponTMP( const CWeaponTMP & );
 };

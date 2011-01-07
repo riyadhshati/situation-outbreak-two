@@ -79,3 +79,32 @@ void CSO_Player::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir,
 		}
 	}
 }
+
+void CSO_Player::DoMuzzleFlash()
+{
+	// Fix CS:S muzzleflashes
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+	// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+	CWeaponSOBase *pWeapon = dynamic_cast<CWeaponSOBase*>( GetActiveWeapon() );
+	if ( pWeapon && !pWeapon->ShouldDrawMuzzleFlash() )
+		return;	// this weapon shouldn't have a muzzleflash drawn, so don't
+
+	for ( int i = 0; i < MAX_VIEWMODELS; i++ )
+	{
+		CBaseViewModel *vm = GetViewModel( i );
+		if ( !vm )
+			continue;
+
+		vm->DoMuzzleFlash();
+	}
+
+	// Fix CS:S muzzleflashes
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+	// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+#ifndef CLIENT_DLL
+	if ( pWeapon )
+		pWeapon->DoMuzzleFlash();
+	else
+		BaseClass::DoMuzzleFlash();
+#endif
+}

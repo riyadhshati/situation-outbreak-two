@@ -61,7 +61,7 @@ void CSOMachineGun::PrimaryAttack( void )
 	int preShotAmmo = m_iClip1;
 
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CSO_Player *pPlayer = ToSOPlayer( GetOwner() );
 	if (!pPlayer)
 		return;
 	
@@ -100,7 +100,7 @@ void CSOMachineGun::PrimaryAttack( void )
 	FireBulletsInfo_t info;
 	info.m_iShots = iBulletsToFire;
 	info.m_vecSrc = pSOPlayer->Weapon_ShootPosition( );
-	info.m_vecDirShooting = pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
+	info.m_vecDirShooting = pPlayer->CBasePlayer::GetAutoaimVector( AUTOAIM_5DEGREES );
 	info.m_vecSpread = pSOPlayer->GetAttackSpread( this );
 	info.m_flDistance = MAX_TRACE_LENGTH;
 	info.m_iAmmoType = m_iPrimaryAmmoType;
@@ -144,7 +144,7 @@ void CSOMachineGun::PrimaryAttack( void )
 //-----------------------------------------------------------------------------
 void CSOMachineGun::FireBullets( const FireBulletsInfo_t &info )
 {
-	if(CBasePlayer *pPlayer = ToBasePlayer ( GetOwner() ) )
+	if(CSO_Player *pPlayer = ToSOPlayer ( GetOwner() ) )
 	{
 		pPlayer->FireBullets(info);
 	}
@@ -246,7 +246,7 @@ int CSOMachineGun::WeaponSoundRealtime( WeaponSound_t shoot_type )
 //-----------------------------------------------------------------------------
 void CSOMachineGun::ItemPostFrame( void )
 {
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	CSO_Player *pOwner = ToSOPlayer( GetOwner() );
 	
 	if ( pOwner == NULL )
 		return;

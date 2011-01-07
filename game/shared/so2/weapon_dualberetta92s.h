@@ -70,7 +70,7 @@ public:
 	const char *GetWeaponSuffix( void ) { return "ELITES"; }
 
 	// Fix dual Beretta 92s muzzleflash issue
-	bool ShouldFlip( void ) { return m_bFlip; }
+	bool ShouldUseAttachment2ForMuzzleFlashes( void ) { return m_bFlip; }	// alternate between using attachment 1 and attachment 2 for muzzleflashes
 
 private:
 	CNetworkVar( float,	m_flSoonestPrimaryAttack );

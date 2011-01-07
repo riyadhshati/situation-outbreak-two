@@ -449,8 +449,11 @@ void CSOPlayerAnimState::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 	}
 
 #ifdef CLIENT_DLL
+	// Duplicate Animation Events Fix
+	// http://developer.valvesoftware.com/wiki/Duplicate_Animation_Events_Fix
+
 	// Make the weapon play the animation as well
-	if ( iGestureActivity != ACT_INVALID && GetSOPlayer() != CSO_Player::GetLocalSOPlayer())
+	if ( (iGestureActivity != ACT_INVALID) && (GetSOPlayer() != CSO_Player::GetLocalSOPlayer()) )
 	{
 		CBaseCombatWeapon *pWeapon = GetSOPlayer()->GetActiveWeapon();
 		if ( pWeapon )

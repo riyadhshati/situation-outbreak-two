@@ -44,6 +44,17 @@ CLIENTEFFECT_MATERIAL( "sprites/physcannon_bluelight2" )
 CLIENTEFFECT_MATERIAL( "effects/combinemuzzle1" )
 CLIENTEFFECT_MATERIAL( "effects/combinemuzzle2" )
 CLIENTEFFECT_MATERIAL( "effects/combinemuzzle2_nocull" )
+
+/////
+
+	// SO2 - James
+	// Fix CS:S muzzleflashes
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+
+	CLIENTEFFECT_MATERIAL( "effects/muzzleflashX" )
+
+/////
+
 CLIENTEFFECT_REGISTER_END()
 #endif
 
@@ -195,7 +206,14 @@ void FX_MuzzleEffect(
 	Vector			forward, offset;
 
 	AngleVectors( angles, &forward );
-	float flScale = random->RandomFloat( scale-0.25f, scale+0.25f );
+
+/////
+
+	// SO2 - James
+	// Fix CS:S muzzleflashes
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+
+	/*float flScale = random->RandomFloat( scale-0.25f, scale+0.25f );
 
 	if ( flScale < 0.5f )
 	{
@@ -204,7 +222,11 @@ void FX_MuzzleEffect(
 	else if ( flScale > 8.0f )
 	{
 		flScale = 8.0f;
-	}
+	}*/
+
+	float flScale = 0.8f;
+
+/////
 
 	//
 	// Flash
@@ -215,13 +237,34 @@ void FX_MuzzleEffect(
 	{
 		offset = origin + (forward * (i*2.0f*scale));
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/muzzleflash%d", random->RandomInt(1,4) ) ), offset );
+/////
+
+		// SO2 - James
+		// Fix CS:S muzzleflashes
+		// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+
+		//pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/muzzleflash%d", random->RandomInt(1,4) ) ), offset );
 			
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( VarArgs( "effects/muzzleflashX" ) ), offset );
+
+/////
+
 		if ( pParticle == NULL )
 			return;
 
 		pParticle->m_flLifetime		= 0.0f;
-		pParticle->m_flDieTime		= /*bOneFrame ? 0.0001f : */0.1f;
+
+/////
+
+		// SO2 - James
+		// Fix CS:S muzzleflashes
+		// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+
+		//pParticle->m_flDieTime		= /*bOneFrame ? 0.0001f : */0.1f;
+
+		pParticle->m_flDieTime		= 0.025f;
+
+/////
 
 		pParticle->m_vecVelocity.Init();
 
@@ -229,7 +272,7 @@ void FX_MuzzleEffect(
 
 	// SO2 - James
 	// Fix CS:S muzzleflashes
-	// http://developer.valvesoftware.com/wiki/HL2_snippets#Working_CS:S_Muzzle_Flashes_without_Model_Editing
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
 
 		C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 		Vector velocity = pPlayer->GetLocalVelocity();

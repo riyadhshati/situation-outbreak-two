@@ -65,6 +65,21 @@ public:
 	virtual float GetScopeFOV( void ) { return 45.0f; }	// this is a reasonable default value, but it should be changed depending on the specific weapon in question
 	virtual bool ShouldDrawCrosshair( void ) { return !m_bIsScoped; }	// disables drawing crosshairs when scoped
 
+	// Fix CS:S muzzleflashes
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+	// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+#ifndef CLIENT_DLL
+	virtual void DoMuzzleFlash( void );
+#endif
+
+	// Fix CS:S muzzleflashes
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+	// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+	virtual bool ShouldDrawMuzzleFlash( void ) { return true; }	// by default, all of our weapons have muzzleflashes
+
+	// Fix dual Beretta 92s muzzleflash issue
+	virtual bool ShouldUseAttachment2ForMuzzleFlashes( void ) { return false; }	// by default, all of our weapons use attachment 1 for muzzleflashes
+
 protected:
 	// Add support for CS:S player animations
 	// I know there's a better way to replace these animations, but I'm extremely lazy

@@ -683,7 +683,7 @@ CBasePlayer *UTIL_GetNearestPlayer( const Vector &origin )
 		if( pPlayer->GetTeamNumber() == TEAM_SPECTATOR )
 			continue;
 
-		float flDist = pow(((pPlayer->GetAbsOrigin() - origin).LengthSqr()), 2);
+		float flDist = (pPlayer->GetAbsOrigin() - origin).LengthSqr();
 		if ( flDist < distToNearest )
 		{
 			pNearestPlayer = pPlayer;
@@ -733,7 +733,7 @@ CBasePlayer *UTIL_GetNearestVisiblePlayer( CBaseEntity *pLooker, int mask )
 		if( pPlayer->GetTeamNumber() == TEAM_SPECTATOR )
 			continue;
 
-		float flDist =  pow(((pPlayer->GetAbsOrigin() - pLooker->GetAbsOrigin()).LengthSqr()), 2);
+		float flDist =  (pPlayer->GetAbsOrigin() - pLooker->GetAbsOrigin()).LengthSqr();
 		if ( flDist < distToNearest && pLooker->FVisible( pPlayer, mask ) )
 		{
 			pNearestPlayer = pPlayer;
