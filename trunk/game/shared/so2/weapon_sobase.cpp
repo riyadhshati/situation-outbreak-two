@@ -12,6 +12,12 @@
 	// Weapon respawn fix
 	// http://developer.valvesoftware.com/wiki/Weapon_Respawn_Fix
 	#include "vphysics/constraints.h"
+
+	// Fix CS:S muzzleflashes
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+	// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+	// Pieced together from various existing DoMuzzleFlash functions and modified from there
+	#include "te_effect_dispatch.h"
 #endif
 
 // Weapon reorigin system
@@ -156,7 +162,7 @@ void CWeaponSOBase::PrimaryAttack( void )
 	}
 
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CSO_Player *pPlayer = ToSOPlayer( GetOwner() );
 	if ( !pPlayer )
 		return;
 
@@ -166,11 +172,12 @@ void CWeaponSOBase::PrimaryAttack( void )
 
 	// player "shoot" animation
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	ToSOPlayer( pPlayer )->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 
 	FireBulletsInfo_t info;
 	info.m_vecSrc = pPlayer->Weapon_ShootPosition();
 	
-	info.m_vecDirShooting = pPlayer->GetAutoaimVector( AUTOAIM_SCALE_DEFAULT );
+	info.m_vecDirShooting = pPlayer->CBasePlayer::GetAutoaimVector( AUTOAIM_SCALE_DEFAULT );
 
 	// To make the firing framerate independent, we may have to fire more than one bullet here on low-framerate systems, 
 	// especially if the weapon we're firing has a really fast rate of fire.
@@ -350,7 +357,7 @@ void CWeaponSOBase::SetWeaponVisible( bool visible )
 {
 	CBaseViewModel *vm = NULL;
 
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	CSO_Player *pOwner = ToSOPlayer( GetOwner() );
 	if ( pOwner )
 		vm = pOwner->GetViewModel( m_nViewModelIndex );
 
@@ -377,6 +384,32 @@ void CWeaponSOBase::SetWeaponVisible( bool visible )
 			vm->AddEffects( EF_NODRAW );
 	}
 }
+
+#ifndef CLIENT_DLL
+// Fix CS:S muzzleflashes
+// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+void CWeaponSOBase::DoMuzzleFlash( void )
+{
+	// This might seem like a simple solution to the whole muzzleflash issue, but it took me a whole day to figure out!
+	// Looks like it works though, so that's good! Well, all's well that ends well...
+	// ...and another day lost to programming. 'Tis the life. =P
+
+	if ( !ShouldDrawMuzzleFlash() )
+		return;	// this weapon shouldn't have a muzzleflash drawn, so don't
+
+	int iAttachment = 1;
+
+	// Fix dual Beretta 92s muzzleflash issue
+	if ( ShouldUseAttachment2ForMuzzleFlashes() )
+		iAttachment = 2;
+
+	CEffectData data;
+	data.m_nAttachmentIndex = iAttachment;
+	data.m_nEntIndex = entindex();
+	DispatchEffect( "MuzzleFlash", data );
+}
+#endif
 
 // Add weapon bob
 
@@ -412,7 +445,7 @@ float CWeaponSOBase::CalcViewmodelBob( void )
 	static	float lastbobtime;
 	float	cycle;
 	
-	CBasePlayer *player = ToBasePlayer( GetOwner() );
+	CSO_Player *player = ToSOPlayer( GetOwner() );
 	//Assert( player );
 
 	//NOTENOTE: For now, let this cycle continue when in the air, because it snaps badly without it
@@ -566,11 +599,11 @@ void vm_adjust_fov_callback( IConVar *pConVar, char const *pOldString, float flO
  
 	ConVarRef var( pConVar );
  
-	CBasePlayer *pPlayer = 
+	CSO_Player *pPlayer = 
 #ifdef GAME_DLL
-		UTIL_GetLocalPlayer();
+		ToSOPlayer( UTIL_GetLocalPlayer() );
 #else
-		C_BasePlayer::GetLocalPlayer();
+		ToSOPlayer( C_BasePlayer::GetLocalPlayer() );
 #endif
 	if( !pPlayer )
 		return;

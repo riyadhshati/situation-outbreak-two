@@ -57,7 +57,7 @@
 	// SO2 - James
 	// Fix dual Beretta 92s muzzleflash issue
 
-#include "weapon_dualberetta92s.h"
+#include "weapon_sobase.h"
 
 /////
 
@@ -3882,7 +3882,7 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 
 	// SO2 - James
 	// Fix CS:S muzzleflashes
-	// http://developer.valvesoftware.com/wiki/HL2_snippets#Working_CS:S_Muzzle_Flashes_without_Model_Editing
+	// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
 
 				/*GetAttachment( iAttachment+1, attachOrigin, attachAngles );
 				int entId = render->GetViewEntity();
@@ -3891,27 +3891,34 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 
 				if ( input->CAM_IsThirdPerson() )
  				{
- 					C_BaseCombatWeapon *pWeapon = GetActiveWeapon();
 
 /////
 					
 					// SO2 - James
 					// Fix dual Beretta 92s muzzleflash issue
 
+					//C_BaseCombatWeapon *pWeapon = GetActiveWeapon();
 					//pWeapon->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
 
-					CWeaponDualBeretta92s *pDualElites = dynamic_cast<CWeaponDualBeretta92s *>( pWeapon );
-					if ( pDualElites )
-					{
-						if ( pDualElites->ShouldFlip() )
-							pWeapon->GetAttachment( iAttachment+2, attachOrigin, attachAngles );
-						else
-							pWeapon->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
-					}
+					CWeaponSOBase *pWeapon = dynamic_cast<CWeaponSOBase*>( GetActiveWeapon() );
+					if ( !pWeapon )
+						break;
+
+/////
+
+					// SO2 - James
+					// Fix CS:S muzzleflashes
+					// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+					// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+					if ( !pWeapon->ShouldDrawMuzzleFlash() )
+						break;	// this weapon shouldn't have a muzzleflash drawn, so don't
+
+/////
+
+					if ( pWeapon->ShouldUseAttachment2ForMuzzleFlashes() )
+						pWeapon->GetAttachment( iAttachment+2, attachOrigin, attachAngles );
 					else
-					{
  						pWeapon->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
-					}
 
 /////
 
@@ -3928,18 +3935,25 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 
 					//vm->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
 
-					CWeaponDualBeretta92s *pDualElites = dynamic_cast<CWeaponDualBeretta92s *>( pPlayer->GetActiveWeapon() );
-					if ( pDualElites )
-					{
-						if ( pDualElites->ShouldFlip() )
-							vm->GetAttachment( iAttachment+2, attachOrigin, attachAngles );
-						else
-							vm->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
-					}
+					CWeaponSOBase *pWeapon = dynamic_cast<CWeaponSOBase*>( pPlayer->GetActiveWeapon() );
+					if ( !pWeapon )
+						break;
+
+/////
+
+					// SO2 - James
+					// Fix CS:S muzzleflashes
+					// http://developer.valvesoftware.com/wiki/Muzzle_Flash_(CSS_Style)
+					// Not mentioned in the tutorial, although it appears necessary to get other players' muzzleflashes to work
+					if ( !pWeapon->ShouldDrawMuzzleFlash() )
+						break;	// this weapon shouldn't have a muzzleflash drawn, so don't
+
+/////
+
+					if ( pWeapon->ShouldUseAttachment2ForMuzzleFlashes() )
+						vm->GetAttachment( iAttachment+2, attachOrigin, attachAngles );
 					else
-					{
  						vm->GetAttachment( iAttachment+1, attachOrigin, attachAngles );
-					}
 
 /////
 

@@ -53,6 +53,7 @@ public:
 	bool Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon );
 	Vector GetAttackSpread( CWeaponSOBase *pWeapon, CBaseEntity *pTarget = NULL );
 	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
+	void DoMuzzleFlash( void );
 
 private:
 	C_SO_Player( const C_SO_Player & );
