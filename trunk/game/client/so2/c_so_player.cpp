@@ -16,6 +16,11 @@
 #undef CSO_Player	
 #endif
 
+// Character customization system
+ConVar cl_playermodel_headgear( "cl_playermodel_headgear", "0", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Character customization: current headgear selection number" );
+ConVar cl_playermodel_glasses( "cl_playermodel_glasses", "0", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Character customization: current glasses selection number" );
+ConVar cl_playermodel_commdevice( "cl_playermodel_commdevice", "0", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Character customization: current communications device selection number" );
+
 LINK_ENTITY_TO_CLASS( player, C_SO_Player );
 
 BEGIN_RECV_TABLE_NOBASE( C_SO_Player, DT_SOLocalPlayerExclusive )

@@ -1656,6 +1656,9 @@
     <ClCompile Include="..\shared\so2\weapon_sobasebasebludgeon.cpp">
       <Filter>Source Files\SO2\Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="so2\customizationpanel.cpp">
+      <Filter>Source Files\SO2\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="achievement_notification_panel.h">
@@ -3484,6 +3487,9 @@
     </ClInclude>
     <ClInclude Include="..\shared\so2\weapon_sobasebasebludgeon.h">
       <Filter>Source Files\SO2\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="so2\customizationpanel.h">
+      <Filter>Source Files\SO2\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

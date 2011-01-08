@@ -16,4 +16,22 @@
 #define	SO_NORM_SPEED 200
 #define	SO_SPRINT_SPEED 250
 
+// Character customization system
+// I know things are out of order in this enum, but I like this order more than the one in the player model qcs
+// Just changing the order here to match the player model qc might cause some confusion, too
+enum
+{
+								// name of bodygroup in player model qc
+
+	BODYGROUP_HEADGEAR = 2,		// "glass"
+	BODYGROUP_GLASSES = 3,		// "glasses"
+	BODYGROUP_COMMDEVICE = 5,	// "mic"
+};
+
+// Character customization system
+// As we add more customization options, these will need to be changed
+static const int BODYGROUP_HEADGEAR_MAX = 2;
+static const int BODYGROUP_GLASSES_MAX = 2;
+static const int BODYGROUP_COMMDEVICE_MAX = 3;
+
 #endif //SO_PLAYER_SHARED_H

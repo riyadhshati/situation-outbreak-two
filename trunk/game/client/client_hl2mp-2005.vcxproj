@@ -650,6 +650,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "c:\program file
     <ClCompile Include="..\shared\soundenvelope.cpp" />
     <ClCompile Include="..\..\public\SoundParametersInternal.cpp" />
     <ClCompile Include="so2\clientmode_sonormal.cpp" />
+    <ClCompile Include="so2\customizationpanel.cpp" />
     <ClCompile Include="so2\c_npc_creeper.cpp" />
     <ClCompile Include="so2\c_so_player.cpp" />
     <ClCompile Include="so2\hud_scope.cpp" />
@@ -925,6 +926,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "c:\program file
     <ClInclude Include="..\shared\point_bonusmaps_accessor.h" />
     <ClInclude Include="..\shared\predicted_viewmodel.h" />
     <ClInclude Include="so2\clientmode_sonormal.h" />
+    <ClInclude Include="so2\customizationpanel.h" />
     <ClInclude Include="so2\c_npc_creeper.h" />
     <ClInclude Include="so2\c_so_player.h" />
     <ClInclude Include="so2\hud_so_stamina.h" />

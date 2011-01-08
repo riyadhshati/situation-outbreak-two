@@ -37,6 +37,15 @@ vgui::IInputInternal *g_InputInternal = NULL;
 
 #include <vgui_controls/Controls.h>
 
+/////
+
+	// SO2 - James
+	// Character customization system
+
+#include "customizationpanel.h"
+
+/////
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -183,6 +192,15 @@ void VGui_CreateGlobalPanels( void )
 	netgraphpanel->Create( toolParent );
 	debugoverlaypanel->Create( gameToolParent );
 
+/////
+
+	// SO2 - James
+	// Character customization system
+
+	customizationpanel->Create( enginevgui->GetPanel(PANEL_GAMEUIDLL) );
+
+/////
+
 #ifndef _X360
 	// Create mp3 player off of tool parent panel
 	MP3Player_Create( toolParent );
@@ -207,6 +225,15 @@ void VGui_Shutdown()
 	messagechars->Destroy();
 	loadingdisc->Destroy();
 	internalCenterPrint->Destroy();
+
+/////
+
+	// SO2 - James
+	// Character customization system
+
+	customizationpanel->Destroy();
+
+/////
 
 	if ( g_pClientMode )
 	{
