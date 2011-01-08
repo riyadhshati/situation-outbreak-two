@@ -15,10 +15,7 @@ class CSO_Player;
 ///////////////////////////////////
 
 static const char *PlayerModels[] = {
-	"models/player/ct_gign.mdl",
-	"models/player/ct_gsg9.mdl",
-	"models/player/ct_sas.mdl",
-	"models/player/ct_urban.mdl"
+	"models/player/soldier/soldier_01.mdl",
 };
 
 ///////////////////////////////////
@@ -82,6 +79,9 @@ public:
 	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
 	void DoMuzzleFlash( void );
 
+	// Character customization system
+	void SetPlayerBodygroups( int bodygroup );
+
 private:
 	// Health regeneration system
 	float m_flHealthRegenDelay;
@@ -98,6 +98,12 @@ private:
 	CSOPlayerAnimState *m_SOPlayerAnimState;
 
 	float m_flModelChangeDelay;
+
+	// Character customization system
+	const char *m_pCurrentHeadgear;
+	const char *m_pCurrentMask;
+	const char *m_pCurrentGlasses;
+	const char *m_pCurrentCommDevice;
 };
 
 inline CSO_Player *ToSOPlayer( CBaseEntity *pEntity )

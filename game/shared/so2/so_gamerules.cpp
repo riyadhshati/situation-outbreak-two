@@ -590,12 +590,12 @@ void CSOGameRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 	const char *pCurrentModel = modelinfo->GetModelName( pPlayer->GetModel() );
 	const char *szDesiredModelName = engine->GetClientConVarValue( engine->IndexOfEdict( pPlayer->edict() ), "cl_playermodel" );
 
-	// Check to see if our desired player model name is different than our current player model name
+	// Check to see if our desired player model name is different than our current one
 	if ( stricmp(szDesiredModelName, pCurrentModel) )
 	{
 		// It is, so try to make our current player model the same as the desired one using model names
 
-		if ( pSOPlayer->GetModelChangeDelay() < gpGlobals->curtime )
+		if ( gpGlobals->curtime < pSOPlayer->GetModelChangeDelay() )
 		{
 			// Ah, but we can't because we've already changed player models recently!
 			// Handle this by setting our desired player model name to our current player model name
@@ -606,7 +606,7 @@ void CSOGameRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 
 			ClientPrint( pSOPlayer, HUD_PRINTTALK, "You cannot change your character so soon!" );
 
-			int waitingTimeLeft = pSOPlayer->GetNextModelChangeTime() - gpGlobals->curtime;
+			int waitingTimeLeft = pSOPlayer->GetModelChangeDelay() - gpGlobals->curtime;
 			if ( waitingTimeLeft == 1 )
 				Q_snprintf( szReturnString, sizeof(szReturnString), "Please wait %d more second before trying to switch again.\n", waitingTimeLeft );
 			else
@@ -623,6 +623,14 @@ void CSOGameRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 			pSOPlayer->SetPlayerModel();
 		}
 	}
+	// Character customization system
+	// Now that we've checked and handled our player model, check to see if our desired bodygroups are different than our current ones
+	else if ( pSOPlayer->GetBodygroup(BODYGROUP_HEADGEAR) != atoi(engine->GetClientConVarValue(engine->IndexOfEdict(pSOPlayer->edict()), "cl_playermodel_headgear")) )
+		pSOPlayer->SetPlayerBodygroups( BODYGROUP_HEADGEAR );
+	else if ( pSOPlayer->GetBodygroup(BODYGROUP_GLASSES) != atoi(engine->GetClientConVarValue(engine->IndexOfEdict(pSOPlayer->edict()), "cl_playermodel_glasses")) )
+		pSOPlayer->SetPlayerBodygroups( BODYGROUP_GLASSES );
+	else if ( pSOPlayer->GetBodygroup(BODYGROUP_COMMDEVICE) != atoi(engine->GetClientConVarValue(engine->IndexOfEdict(pSOPlayer->edict()), "cl_playermodel_commdevice")) )
+		pSOPlayer->SetPlayerBodygroups( BODYGROUP_COMMDEVICE );
 
 	if ( sv_report_client_settings.GetInt() == 1 )
 		UTIL_LogPrintf( "\"%s\" cl_cmdrate = \"%s\"\n", pSOPlayer->GetPlayerName(), engine->GetClientConVarValue( pSOPlayer->entindex(), "cl_cmdrate" ) );

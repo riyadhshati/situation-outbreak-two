@@ -109,6 +109,12 @@ CSO_Player::CSO_Player()
 	// Add support for CS:S player animations
 	DoAnimationEvent( PLAYERANIMEVENT_SPAWN );
 	m_iThrowGrenadeCounter = 0;
+
+	// Character customization system
+	m_pCurrentHeadgear = NULL;
+	m_pCurrentMask = NULL;
+	m_pCurrentGlasses = NULL;
+	m_pCurrentCommDevice = NULL;
 }
 
 CSO_Player::~CSO_Player( void )
@@ -224,7 +230,62 @@ void CSO_Player::SetPlayerModel()
 
 	SetModel( szDesiredModelName );
 
+	// Character customization system
+	// Our player model must be valid before we start applying bodygroups and stuff
+	SetPlayerBodygroups( BODYGROUP_HEADGEAR );
+	SetPlayerBodygroups( BODYGROUP_GLASSES );
+	SetPlayerBodygroups( BODYGROUP_COMMDEVICE );
+
 	m_flModelChangeDelay = gpGlobals->curtime + MODEL_CHANGE_DELAY;
+}
+
+// Character customization system
+void CSO_Player::SetPlayerBodygroups( int bodygroup )
+{
+	switch ( bodygroup )
+	{
+	case BODYGROUP_HEADGEAR:
+		{
+			m_pCurrentHeadgear = engine->GetClientConVarValue(engine->IndexOfEdict(edict()), "cl_playermodel_headgear");
+
+			char szReturnString[32];
+			Q_snprintf( szReturnString, sizeof(szReturnString), "cl_playermodel_headgear %s\n", m_pCurrentHeadgear );
+			engine->ClientCommand( edict(), szReturnString );
+
+			SetBodygroup( BODYGROUP_HEADGEAR, atoi(m_pCurrentHeadgear) );
+
+			break;
+		}
+	case BODYGROUP_GLASSES:
+		{
+			m_pCurrentGlasses = engine->GetClientConVarValue(engine->IndexOfEdict(edict()), "cl_playermodel_glasses");
+
+			char szReturnString[32];
+			Q_snprintf( szReturnString, sizeof(szReturnString), "cl_playermodel_glasses %s\n", m_pCurrentGlasses );
+			engine->ClientCommand( edict(), szReturnString );
+
+			SetBodygroup( BODYGROUP_GLASSES, atoi(m_pCurrentGlasses) );
+
+			break;
+		}
+	case BODYGROUP_COMMDEVICE:
+		{
+			m_pCurrentCommDevice = engine->GetClientConVarValue(engine->IndexOfEdict(edict()), "cl_playermodel_commdevice");
+
+			char szReturnString[32];
+			Q_snprintf( szReturnString, sizeof(szReturnString), "cl_playermodel_commdevice %s\n", m_pCurrentCommDevice );
+			engine->ClientCommand( edict(), szReturnString );
+
+			SetBodygroup( BODYGROUP_COMMDEVICE, atoi(m_pCurrentCommDevice) );
+
+			break;
+		}
+	default:
+		{
+			// When in doubt, do nothing!
+			break;
+		}
+	}
 }
 
 void CSO_Player::PostThink( void )

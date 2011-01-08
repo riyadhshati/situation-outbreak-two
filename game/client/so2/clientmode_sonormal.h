@@ -28,10 +28,13 @@ public:
 
 	void Init();
 	int GetDeathMessageStartHeight( void );
+
+	// Character customization system
+	void PostRenderVGui( void );
 };
 
 extern IClientMode *GetClientModeNormal();
-extern vgui::HScheme g_hVGuiCombineScheme;
+extern HScheme g_hVGuiCombineScheme;
 
 extern ClientModeSONormal* GetClientModeSONormal();
 
