@@ -20,26 +20,32 @@
 	}
 	"4"
 	{
-		"label" ""
-		"command" ""
+		"label" "CHARACTER CUSTOMIZATION"
+		"command" "engine ToggleCustomizationPanel"
 		"OnlyInGame" "1"
 	}
 	"5"
 	{
+		"label" ""
+		"command" ""
+		"OnlyInGame" "1"
+	}
+	"6"
+	{
 		"label" "#GameUI_GameMenu_FindServers"
 		"command" "OpenServerBrowser"
 	}
-	"6"
+	"7"
 	{
 		"label" "#GameUI_GameMenu_CreateServer"
 		"command" "OpenCreateMultiplayerGameDialog"
 	}
-	"10"
+	"8"
 	{
 		"label" "#GameUI_GameMenu_Options"
 		"command" "OpenOptionsDialog"
 	}
-	"11"
+	"9"
 	{
 		"label" "#GameUI_GameMenu_Quit"
 		"command" "Quit"

@@ -1,0 +1,9 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models/player/soldier01/soldier01_glass_diffuse"
+	"$envmap" 			"env_cubemap"
+	"$envmapmask" "models/player/soldier01/soldier01_glass_spec"
+	"$translucent" 1
+	"$nocull" 1
+}
+

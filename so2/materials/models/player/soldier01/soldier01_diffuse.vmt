@@ -1,0 +1,18 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models/player/soldier01/soldier01_diffuse"
+        "$bumpmap" "models/player/soldier01/soldier01_normal"
+        "$envmap" 			"env_cubemap"
+	"$normalmapalphaenvmapmask" 1
+	"$envmapcontrast" 0.3
+	"$envmapsaturation" 0.7
+	"$envmaptint" "[ 0.36 0.36 0.36 ]"
+	"$phong" "1"
+	"$phongboost" "1.25"
+	"$phongexponent" "3.5"
+	"$phongfresnelranges" "[.24 .54 9]"
+	"$rimlight"	"1"
+	"$rimlightexponent"	"2"
+	"$rimlightboost "	".25"
+}
+
