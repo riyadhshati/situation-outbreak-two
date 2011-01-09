@@ -23,14 +23,14 @@ enum
 {
 								// name of bodygroup in player model qc
 
-	BODYGROUP_HEADGEAR = 2,		// "glass"
+	BODYGROUP_HEADGEAR = 2,		// "headgear"
 	BODYGROUP_GLASSES = 3,		// "glasses"
-	BODYGROUP_COMMDEVICE = 5,	// "mic"
+	BODYGROUP_COMMDEVICE = 4,	// "commdev"
 };
 
 // Character customization system
 // As we add more customization options, these will need to be changed
-static const int BODYGROUP_HEADGEAR_MAX = 2;
+static const int BODYGROUP_HEADGEAR_MAX = 3;
 static const int BODYGROUP_GLASSES_MAX = 2;
 static const int BODYGROUP_COMMDEVICE_MAX = 3;
 
