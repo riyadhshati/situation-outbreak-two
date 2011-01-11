@@ -94,6 +94,11 @@ CStudioHdr *C_SO_Player::OnNewModel( void )
 	return hdr;
 }
 
+void C_SO_Player::ClientThink( void )
+{
+	BaseClass::ClientThink();
+}
+
 // First-person ragdolls
 // http://developer.valvesoftware.com/wiki/First_Person_Ragdolls
 void C_SO_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov )

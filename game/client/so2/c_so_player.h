@@ -55,6 +55,10 @@ public:
 	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
 	void DoMuzzleFlash( void );
 
+	virtual void ClientThink( void );
+
+	virtual void PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
+
 private:
 	C_SO_Player( const C_SO_Player & );
 
