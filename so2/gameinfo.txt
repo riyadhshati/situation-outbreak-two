@@ -30,8 +30,7 @@
 		{
 			Game				|gameinfo_path|.
 			Game				|all_source_engine_paths|hl2
-			Game				"C:\Users\James\Desktop\Situation Outbreak Two\cstrike"	// remove this before release
-			//Game				|all_source_engine_paths|cstrike	// uncomment this before release (?)
+			Game				|all_source_engine_paths|cstrike
 		}
 	}
 }
