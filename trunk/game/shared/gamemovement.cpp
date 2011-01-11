@@ -27,6 +27,8 @@
 	#include "so_player.h"
 #endif
 
+#include "so_player_shared.h"
+
 /////
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -1899,20 +1901,15 @@ void CGameMovement::StayOnGround( void )
 void CGameMovement::WalkMove( void )
 {
 
-/////
-
-	// SO2 - James
 	// Add a slight view bob when a player moves
 	// http://developer.valvesoftware.com/wiki/Camera_Bob
+	CBasePlayer *obsplayer = ( ( player->IsObserver() && player->GetObserverTarget() ) ? ToBasePlayer( player->GetObserverTarget() ) : player );
 
-	if ( !engine->IsPaused() )
+	if( obsplayer && ( obsplayer->MaxSpeed() > SO_NORM_SPEED || obsplayer->GetGroundEntity() == NULL ) && obsplayer->GetMoveType() != MOVETYPE_NOCLIP && obsplayer->GetMoveType() != MOVETYPE_OBSERVER )
 	{
-		float xoffset = sin( gpGlobals->curtime * 10.0f ) * player->GetAbsVelocity().Length() * 0.015f / 100;
-		float yoffset = sin( 2 * gpGlobals->curtime * 10.0f ) * player->GetAbsVelocity().Length() * 0.015f / 400;
-		player->ViewPunch( QAngle( xoffset, yoffset, 0));
+		float pvel = obsplayer->GetAbsVelocity().Length();
+		player->ViewPunch( QAngle( sin( gpGlobals->curtime * 8.5 ) * ( pvel / 9000 ), sin( gpGlobals->curtime * 4.25 ) * ( pvel / 7500 ), 0 ) );
 	}
-
-/////
 
 	int i;
 

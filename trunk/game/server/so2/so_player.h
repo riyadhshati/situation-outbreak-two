@@ -60,6 +60,8 @@ public:
 	void Event_Killed( const CTakeDamageInfo &info );
 	bool StartObserverMode( int mode );
 
+	virtual void PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
+
 	// Rework respawning system
 	void PlayerDeathThink( void );
 

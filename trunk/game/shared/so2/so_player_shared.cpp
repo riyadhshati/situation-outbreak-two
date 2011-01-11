@@ -2,6 +2,7 @@
 
 #ifdef CLIENT_DLL
 	#include "c_so_player.h"
+	#include "prediction.h"
 #else
 	#include "so_player.h"
 	#include "ai_basenpc.h"
@@ -107,4 +108,27 @@ void CSO_Player::DoMuzzleFlash()
 	else
 		BaseClass::DoMuzzleFlash();
 #endif
+}
+
+
+//-----------------------------------------------------------------------------
+// Override the ugly as fuck HL2MP footsteps
+//-----------------------------------------------------------------------------
+extern ConVar sv_footsteps;
+
+void CSO_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force )
+{
+	if ( gpGlobals->maxClients > 1 && !sv_footsteps.GetFloat() )
+		return;
+
+#if defined( CLIENT_DLL )
+	// during prediction play footstep sounds only once
+	if ( !prediction->IsFirstTimePredicted() )
+		return;
+#endif
+
+	if ( GetFlags() & FL_DUCKING )
+		return;
+
+	CBasePlayer::PlayStepSound( vecOrigin, psurface, fvol, force );
 }
